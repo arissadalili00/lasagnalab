@@ -1,7 +1,7 @@
 import emailjs, { EmailJSResponseStatus } from "@emailjs/browser";
 import type { OrderSummary } from "../types";
 import { buildFullReceiptText } from "./receipt";
-import { brand, emailConfig } from "../data/site";
+import { brand, emailConfig, emailJsConfig as emailJsDefaults } from "../data/site";
 
 export type EmailReceiptStatus = "sent" | "failed" | "not_configured";
 
@@ -30,11 +30,17 @@ function getEmailJsConfig(): EmailJsRuntimeConfig {
 
   return {
     serviceId:
-      fromDefine?.serviceId || readEnv("VITE_EMAILJS_SERVICE_ID"),
+      fromDefine?.serviceId ||
+      readEnv("VITE_EMAILJS_SERVICE_ID") ||
+      emailJsDefaults.serviceId,
     templateId:
-      fromDefine?.templateId || readEnv("VITE_EMAILJS_TEMPLATE_ID"),
+      fromDefine?.templateId ||
+      readEnv("VITE_EMAILJS_TEMPLATE_ID") ||
+      emailJsDefaults.templateId,
     publicKey:
-      fromDefine?.publicKey || readEnv("VITE_EMAILJS_PUBLIC_KEY"),
+      fromDefine?.publicKey ||
+      readEnv("VITE_EMAILJS_PUBLIC_KEY") ||
+      emailJsDefaults.publicKey,
     privateKey:
       fromDefine?.privateKey || readEnv("VITE_EMAILJS_PRIVATE_KEY") || "",
   };

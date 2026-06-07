@@ -17,6 +17,17 @@ export const emailConfig = {
   companyEmail: "thecreamypastaco@gmail.com",
 };
 
+/**
+ * EmailJS client config (public keys — safe in frontend code).
+ * Used on Netlify/live builds where local `.env` is not deployed.
+ * Optional `.env` values override these for local development.
+ */
+export const emailJsConfig = {
+  serviceId: "service_syb5foz",
+  templateId: "template_i9qt1iw",
+  publicKey: "AQgiUTXyWJBU-lbhu",
+};
+
 /** Update whatsappPhone with your business number (country code, no + or spaces). */
 export const payment = {
   whatsappPhone: "60123456789",

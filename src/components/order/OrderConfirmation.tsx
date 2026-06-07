@@ -72,7 +72,9 @@ export function OrderConfirmation({
       : emailReceiptStatus === "failed"
         ? `Could not send to ${customerEmail} — tap Resend below`
         : emailReceiptStatus === "not_configured"
-          ? "Email keys missing — restart dev server after updating .env"
+          ? import.meta.env.PROD
+            ? "Email service not set up on live site — redeploy after config update"
+            : "Email keys missing — restart dev server after updating .env"
           : "Sending receipt…";
 
   const steps = [
@@ -168,9 +170,20 @@ export function OrderConfirmation({
               {emailReceiptStatus === "not_configured" ? (
                 <>
                   <strong className="text-ink">Email not configured.</strong>{" "}
-                  Check your EmailJS keys in `.env`, then restart the dev server
-                  (`npm run dev`) so receipts send from{" "}
-                  {emailConfig.companyEmail}.
+                  {import.meta.env.PROD ? (
+                    <>
+                      The live site needs a fresh deploy with EmailJS settings.
+                      If this persists, allow{" "}
+                      <span className="font-mono text-ink">creamypastaco.netlify.app</span>{" "}
+                      in your EmailJS dashboard, then redeploy on Netlify.
+                    </>
+                  ) : (
+                    <>
+                      Check your EmailJS keys in `.env`, then restart the dev
+                      server (`npm run dev`) so receipts send from{" "}
+                      {emailConfig.companyEmail}.
+                    </>
+                  )}
                 </>
               ) : (
                 <>
