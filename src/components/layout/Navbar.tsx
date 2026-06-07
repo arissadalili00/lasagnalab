@@ -82,7 +82,7 @@ export function Navbar() {
               type="button"
               onClick={logout}
               className="hidden md:inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-bold text-ink hover:bg-cream-dark transition-colors min-h-[44px]"
-              title={user?.phone}
+              title={user?.email}
             >
               <LogOut size={16} />
               <span className="max-w-[100px] truncate">

@@ -1,5 +1,5 @@
 import emailjs, { EmailJSResponseStatus } from "@emailjs/browser";
-import type { OrderSummary } from "./whatsapp";
+import type { OrderSummary } from "../types";
 import { buildFullReceiptText } from "./receipt";
 import { brand, emailConfig } from "../data/site";
 

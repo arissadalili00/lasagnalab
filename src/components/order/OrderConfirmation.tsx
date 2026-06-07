@@ -2,20 +2,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
-  MessageCircle,
   Copy,
   Check,
   Download,
   Mail,
-  Smartphone,
   Clock,
   Home,
   AlertCircle,
 } from "lucide-react";
-import type { OrderSummary } from "../../utils/whatsapp";
+import type { OrderSummary } from "../../types";
 import {
   buildFullReceiptText,
-  buildEmailReceiptUrl,
   copyReceiptToClipboard,
   downloadReceipt,
 } from "../../utils/receipt";
@@ -23,11 +20,6 @@ import {
   sendOrderReceiptEmailSafe,
   type EmailReceiptStatus,
 } from "../../utils/email";
-import {
-  buildOrderReceiptMessage,
-  buildWhatsAppOrderUrl,
-  openWhatsAppLink,
-} from "../../utils/whatsapp";
 import { emailConfig } from "../../data/site";
 import { Button } from "../ui/Button";
 import { GlassCard } from "../ui/GlassCard";
@@ -50,13 +42,11 @@ export function OrderConfirmation({
   onGoHome,
 }: OrderConfirmationProps) {
   const [copied, setCopied] = useState(false);
-  const [whatsappOpened, setWhatsappOpened] = useState(false);
   const [emailReceiptStatus, setEmailReceiptStatus] = useState(initialEmailStatus);
   const [emailErrorMessage, setEmailErrorMessage] = useState(initialErrorMessage);
   const [resendingEmail, setResendingEmail] = useState(false);
 
   const receiptText = buildFullReceiptText(order);
-  const shopOrderUrl = buildWhatsAppOrderUrl(buildOrderReceiptMessage(order));
   const needsPaymentProof = order.form.paymentMethod !== "cod";
 
   const handleCopy = async () => {
@@ -65,11 +55,6 @@ export function OrderConfirmation({
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
-  };
-
-  const handleOpenWhatsApp = () => {
-    openWhatsAppLink(shopOrderUrl);
-    setWhatsappOpened(true);
   };
 
   const handleResendEmail = async () => {
@@ -108,16 +93,9 @@ export function OrderConfirmation({
       detail: "Copy or download below",
     },
     {
-      done: whatsappOpened,
-      label: "Send order to shop on WhatsApp",
-      detail: needsPaymentProof
-        ? "Tap Send — attach your payment screenshot"
-        : "Tap Send to confirm with the shop",
-    },
-    {
       done: false,
-      label: "Shop confirms your pickup time",
-      detail: `They will reply to ${order.phone} on WhatsApp`,
+      label: "Shop confirms your order",
+      detail: `We will contact you at ${order.phone} or ${customerEmail}`,
     },
   ];
 
@@ -189,9 +167,9 @@ export function OrderConfirmation({
             <div className="text-xs text-muted text-left">
               {emailReceiptStatus === "not_configured" ? (
                 <>
-                  <strong className="text-ink">Email not configured.</strong> Copy
-                  `.env.example` to `.env` and add your EmailJS keys so receipts
-                  send automatically from {emailConfig.companyEmail}.
+                  <strong className="text-ink">Email not configured.</strong> Add
+                  your EmailJS keys in `.env` so receipts send from{" "}
+                  {emailConfig.companyEmail}.
                 </>
               ) : (
                 <>
@@ -201,9 +179,7 @@ export function OrderConfirmation({
                       {emailErrorMessage}
                     </span>
                   )}
-                  <span className="block mt-2">
-                    Fix in EmailJS (see steps below) or tap Resend Email.
-                  </span>
+                  <span className="block mt-2">Tap Resend Email below to try again.</span>
                 </>
               )}
             </div>
@@ -221,7 +197,7 @@ export function OrderConfirmation({
           {screenshotPreview && needsPaymentProof && (
             <div className="mt-4 pt-4 border-t border-linen">
               <p className="text-xs font-medium text-ink mb-2">
-                Payment screenshot (attach in WhatsApp):
+                Your payment screenshot:
               </p>
               <img
                 src={screenshotPreview}
@@ -253,52 +229,18 @@ export function OrderConfirmation({
           </Button>
         </div>
 
-        {customerEmail &&
-          emailReceiptStatus !== "sent" &&
-          emailReceiptStatus !== "not_configured" && (
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full mb-3"
-              isLoading={resendingEmail}
-              onClick={handleResendEmail}
-            >
-              <Mail size={18} />
-              Resend Email to {customerEmail}
-            </Button>
-          )}
-
-        {customerEmail && emailReceiptStatus === "not_configured" && (
-          <a
-            href={buildEmailReceiptUrl(order, customerEmail)}
-            className="block mb-3"
+        {customerEmail && emailReceiptStatus !== "sent" && (
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full mb-4"
+            isLoading={resendingEmail}
+            onClick={handleResendEmail}
           >
-            <Button type="button" variant="outline" className="w-full">
-              <Mail size={18} />
-              Open Email App (manual backup)
-            </Button>
-          </a>
+            <Mail size={18} />
+            Resend Email to {customerEmail}
+          </Button>
         )}
-
-        <Button
-          type="button"
-          size="lg"
-          className="w-full min-h-[52px] mb-3"
-          onClick={handleOpenWhatsApp}
-        >
-          <MessageCircle size={20} />
-          {whatsappOpened ? "Open WhatsApp Again" : "Send Order to Shop on WhatsApp"}
-        </Button>
-
-        <div className="flex items-start gap-2 p-3 rounded-xl bg-tomato/5 border border-tomato/20 mb-4">
-          <Smartphone size={16} className="text-tomato shrink-0 mt-0.5" />
-          <p className="text-xs text-muted text-left">
-            <strong className="text-ink">How you know your order is received:</strong>{" "}
-            Your receipt is emailed to {customerEmail || "your email"}. Send the
-            WhatsApp message above so the shop gets your order. They will reply to{" "}
-            <strong className="text-ink">{order.phone}</strong> to confirm pickup.
-          </p>
-        </div>
 
         <Button
           type="button"

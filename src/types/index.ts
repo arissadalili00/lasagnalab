@@ -43,11 +43,24 @@ export interface WhyChooseItem {
 }
 
 export interface CheckoutFormData {
+  phone: string;
   address: string;
   city: string;
   zipCode: string;
   paymentMethod: "bank" | "ewallet" | "cod";
   notes: string;
+}
+
+export interface OrderSummary {
+  orderId: string;
+  shortName: string;
+  phone: string;
+  items: CartItem[];
+  form: CheckoutFormData;
+  subtotal: number;
+  tax: number;
+  deliveryFee: number;
+  total: number;
 }
 
 export interface NavLink {

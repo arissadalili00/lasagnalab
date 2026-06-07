@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { Phone, User, Mail } from "lucide-react";
+import { User, Mail } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { brand } from "../data/site";
 import { Button } from "../components/ui/Button";
@@ -12,13 +12,12 @@ const inputClass =
 export function LoginPage() {
   const { login } = useAuth();
   const [shortName, setShortName] = useState("");
-  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!shortName.trim() || !phone.trim() || !email.trim()) return;
-    login(shortName, phone, email);
+    if (!shortName.trim() || !email.trim()) return;
+    login(shortName, email);
   };
 
   return (
@@ -34,8 +33,8 @@ export function LoginPage() {
           </div>
           <h1 className="font-display text-3xl font-bold mb-2">Welcome</h1>
           <p className="text-muted text-sm">
-            Enter your details to start ordering. Your receipt will be emailed
-            automatically after checkout.
+            Enter your name and email to start ordering. Your receipt will be
+            emailed automatically after checkout.
           </p>
         </div>
 
@@ -57,27 +56,6 @@ export function LoginPage() {
                   placeholder="e.g. Ali, Sarah"
                   value={shortName}
                   onChange={(e) => setShortName(e.target.value)}
-                  className={`${inputClass} pl-11`}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="login-phone" className="block text-sm font-medium mb-1.5">
-                WhatsApp Number
-              </label>
-              <div className="relative">
-                <Phone
-                  size={18}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
-                />
-                <input
-                  id="login-phone"
-                  type="tel"
-                  required
-                  placeholder="e.g. 60123456789"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
                   className={`${inputClass} pl-11`}
                 />
               </div>

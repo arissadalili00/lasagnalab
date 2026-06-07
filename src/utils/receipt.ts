@@ -1,6 +1,6 @@
-import type { OrderSummary } from "./whatsapp";
+import type { OrderSummary } from "../types";
 import { formatCurrency } from "./formatCurrency";
-import { brand } from "../data/site";
+import { brand, emailConfig } from "../data/site";
 
 const ORDERS_KEY = "lasagnalab-orders";
 
@@ -56,7 +56,7 @@ export function buildFullReceiptText(order: OrderSummary): string {
     "",
     "────────────────────────────────",
     "Keep this receipt for your records.",
-    `Questions? WhatsApp ${brand.name}`,
+    `Questions? Email ${emailConfig.companyEmail}`,
     "════════════════════════════════",
   ]
     .filter((line) => line !== null)

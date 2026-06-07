@@ -12,14 +12,13 @@ const STORAGE_KEY = "lasagnalab-user";
 
 export interface User {
   shortName: string;
-  phone: string;
   email: string;
 }
 
 interface AuthContextValue {
   user: User | null;
   isLoggedIn: boolean;
-  login: (shortName: string, phone: string, email: string) => void;
+  login: (shortName: string, email: string) => void;
   logout: () => void;
 }
 
@@ -29,12 +28,11 @@ function loadUser(): User | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as User & { name?: string };
+    const parsed = JSON.parse(raw) as User & { name?: string; phone?: string };
     const shortName = (parsed.shortName ?? parsed.name ?? "").trim();
-    const phone = parsed.phone?.trim() ?? "";
     const email = parsed.email?.trim() ?? "";
-    if (!shortName || !phone || !email) return null;
-    return { shortName, phone, email };
+    if (!shortName || !email) return null;
+    return { shortName, email };
   } catch {
     return null;
   }
@@ -51,10 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
-  const login = useCallback((shortName: string, phone: string, email: string) => {
+  const login = useCallback((shortName: string, email: string) => {
     setUser({
       shortName: shortName.trim(),
-      phone: phone.trim(),
       email: email.trim().toLowerCase(),
     });
   }, []);

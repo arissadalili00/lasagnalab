@@ -21,7 +21,7 @@ import {
   sendOrderReceiptEmailSafe,
   type EmailReceiptStatus,
 } from "../utils/email";
-import type { OrderSummary } from "../utils/whatsapp";
+import type { OrderSummary } from "../types";
 import type { CheckoutFormData } from "../types";
 import { brand, payment, emailConfig } from "../data/site";
 import { Button } from "../components/ui/Button";
@@ -32,6 +32,7 @@ import { OrderConfirmation } from "../components/order/OrderConfirmation";
 type CheckoutStep = "form" | "payment" | "success";
 
 const initialForm: CheckoutFormData = {
+  phone: "",
   address: "",
   city: "",
   zipCode: "",
@@ -108,7 +109,7 @@ export function CheckoutPage() {
       await finalizeOrder({
         orderId: generateOrderId(),
         shortName: user.shortName,
-        phone: user.phone,
+        phone: form.phone,
         items: [...items],
         form,
         subtotal,
@@ -127,7 +128,7 @@ export function CheckoutPage() {
     await finalizeOrder({
       orderId: generateOrderId(),
       shortName: user.shortName,
-      phone: user.phone,
+      phone: form.phone,
       items: [...items],
       form,
       subtotal,
@@ -334,7 +335,7 @@ export function CheckoutPage() {
             <p className="text-sm text-muted mt-2">
               Ordering as{" "}
               <span className="font-medium text-ink">{user.shortName}</span> ·{" "}
-              {user.phone}
+              {user.email}
             </p>
           )}
         </ScrollReveal>
@@ -348,6 +349,23 @@ export function CheckoutPage() {
                     Delivery Address
                   </h2>
                   <div className="space-y-4">
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium mb-1.5"
+                      >
+                        Phone Number
+                      </label>
+                      <input
+                        id="phone"
+                        type="tel"
+                        required
+                        placeholder="e.g. 0193178099"
+                        value={form.phone}
+                        onChange={(e) => updateField("phone", e.target.value)}
+                        className={inputClass}
+                      />
+                    </div>
                     <div>
                       <label
                         htmlFor="address"
@@ -514,8 +532,8 @@ export function CheckoutPage() {
                 </div>
                 <p className="text-xs text-muted mt-4">
                   {form.paymentMethod === "cod"
-                    ? "Cash on pickup — receipt sent via WhatsApp."
-                    : "Pay via QR + screenshot, then get WhatsApp receipt."}{" "}
+                    ? "Cash on pickup — receipt emailed to you."
+                    : "Pay via QR + screenshot, then receipt emailed to you."}{" "}
                   Open {brand.hours}.
                 </p>
                 <Button
