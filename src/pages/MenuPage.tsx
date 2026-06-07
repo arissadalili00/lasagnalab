@@ -1,20 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Search, Filter } from "lucide-react";
 import { products, categoryLabels } from "../data/products";
 import type { ProductCategory } from "../types";
 import { ProductCard } from "../components/products/ProductCard";
 import { ProductGridSkeleton } from "../components/ui/ProductSkeleton";
-import { ScrollReveal } from "../components/ui/ScrollReveal";
+import { FadeIn } from "../components/ui/PageTransition";
 
-const categories: (ProductCategory | "all")[] = [
-  "all",
-  "classic",
-  "chicken",
-  "seafood",
-  "vegetarian",
-  "premium",
-  "spicy",
-];
+const categories: (ProductCategory | "all")[] = ["all", "lasagna", "macaroni"];
 
 export function MenuPage() {
   const [search, setSearch] = useState("");
@@ -22,7 +15,7 @@ export function MenuPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
+    const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
   }, []);
 
@@ -35,35 +28,38 @@ export function MenuPage() {
         product.tags.some((tag) =>
           tag.toLowerCase().includes(search.toLowerCase())
         );
-
       const matchesCategory =
         category === "all" || product.category === category;
-
       return matchesSearch && matchesCategory;
     });
   }, [search, category]);
 
   return (
-    <div className="pt-28 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal className="text-center mb-12">
-          <span className="text-tomato font-medium text-sm uppercase tracking-wider">
-            Full Menu
-          </span>
-          <h1 className="font-display text-4xl sm:text-5xl font-bold mt-2 mb-4">
-            Our Lasagna Collection
-          </h1>
-          <p className="text-olive/70 dark:text-cream/70 max-w-2xl mx-auto">
-            Browse our complete selection of handcrafted lasagnas. Filter by
-            category or search for your favorite flavors.
-          </p>
-        </ScrollReveal>
+    <div>
+      {/* Menu hero banner */}
+      <div className="relative pt-[5.5rem] sm:pt-32 pb-12 sm:pb-16 overflow-hidden hero-dark">
+        <div className="absolute inset-0 opacity-[0.06] bg-[url('https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=1400&h=400&fit=crop&q=80')] bg-cover bg-center" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <FadeIn>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.2em] text-butter bg-white/10 border border-white/15 mb-4">
+              Full Menu
+            </span>
+            <h1 className="hero-headline text-2xl xs:text-3xl sm:text-4xl md:text-5xl text-white mb-3 sm:mb-4">
+              Our Menu
+            </h1>
+            <p className="text-base sm:text-lg text-white max-w-2xl mx-auto px-2 font-semibold">
+              Beef or chicken · Pre-order only · All prices in RM
+            </p>
+          </FadeIn>
+        </div>
+      </div>
 
-        <ScrollReveal delay={0.1} className="mb-8 space-y-4">
-          <div className="relative max-w-md mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <FadeIn delay={0.15} className="mb-10 space-y-5">
+          <div className="relative max-w-lg mx-auto">
             <Search
               size={20}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-olive/40 dark:text-cream/40"
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-muted/50"
             />
             <input
               type="search"
@@ -71,43 +67,62 @@ export function MenuPage() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search lasagnas..."
               aria-label="Search products"
-              className="w-full pl-12 pr-4 py-3 rounded-full glass dark:glass-dark focus:outline-none focus:ring-2 focus:ring-tomato transition-shadow"
+              className="w-full pl-14 pr-5 py-3.5 sm:py-4 rounded-2xl surface-card focus:outline-none focus:ring-2 focus:ring-tomato/40 premium-shadow transition-shadow input-mobile"
             />
           </div>
 
-          <div className="flex items-center justify-center gap-2 flex-wrap">
-            <Filter size={16} className="text-olive/50 dark:text-cream/50" />
+          <div className="scroll-x-mobile sm:items-center">
+            <Filter size={16} className="text-muted/60 shrink-0 hidden sm:block" />
             {categories.map((cat) => (
-              <button
+              <motion.button
                 key={cat}
+                whileTap={{ scale: 0.96 }}
                 onClick={() => setCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`px-4 sm:px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 whitespace-nowrap shrink-0 min-h-[44px] ${
                   category === cat
-                    ? "bg-tomato text-cream shadow-md"
-                    : "glass dark:glass-dark hover:bg-tomato/10"
+                    ? "bg-tomato text-white shadow-[0_4px_16px_rgba(242,92,5,0.35)]"
+                    : "surface-card text-ink/70 hover:text-ink hover:border-tomato/30"
                 }`}
               >
                 {cat === "all" ? "All" : categoryLabels[cat]}
-              </button>
+              </motion.button>
             ))}
           </div>
-        </ScrollReveal>
+        </FadeIn>
 
         {loading ? (
           <ProductGridSkeleton count={6} />
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-lg font-medium mb-2">No lasagnas found</p>
-            <p className="text-olive/60 dark:text-cream/60">
-              Try adjusting your search or filter criteria.
-            </p>
-          </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${search}-${category}`}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3 }}
+            >
+              {filtered.length === 0 ? (
+                <div className="text-center py-24">
+                  <p className="text-xl font-display font-semibold mb-2">
+                    No lasagnas found
+                  </p>
+                  <p className="text-muted">
+                    Try adjusting your search or filter criteria.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-7">
+                  {filtered.map((product, index) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         )}
       </div>
     </div>

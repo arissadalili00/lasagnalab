@@ -1,40 +1,52 @@
 import type { Stat, WhyChooseItem } from "../types";
 
+export const brand = {
+  name: "The Creamy Pasta Co.",
+  shortName: "Creamy Pasta",
+  tagline: "Indulge in creamy pasta perfection",
+  byline: "by jijah",
+  instagram: "https://instagram.com/thecreamypastaco",
+  whatsapp: "https://wa.link/xz1ljl",
+  location: "Puncak Alam, Selangor",
+  hours: "10:00 AM – 5:00 PM",
+  orderNote: "Pre-order only · WhatsApp to order (no calls)",
+};
+
 export const stats: Stat[] = [
-  { id: "orders", value: "10,000+", label: "Orders Delivered" },
-  { id: "rating", value: "4.9", label: "Average Rating" },
-  { id: "customers", value: "5,000+", label: "Happy Customers" },
-  { id: "branches", value: "15", label: "Branches" },
+  { id: "orders", value: "500+", label: "Happy Pre-Orders" },
+  { id: "rating", value: "5.0", label: "Customer Rating" },
+  { id: "location", value: "Puncak Alam", label: "Based In" },
+  { id: "hours", value: "10–5", label: "Daily Hours" },
 ];
 
 export const whyChooseUs: WhyChooseItem[] = [
   {
-    id: "fresh",
-    title: "Fresh Ingredients",
+    id: "creamy",
+    title: "Creamy Perfection",
     description:
-      "We source locally-grown produce and import authentic Italian cheeses and pasta daily.",
+      "Every tray is baked with rich, luscious layers — the signature creaminess our customers love.",
+    icon: "chef",
+  },
+  {
+    id: "fresh",
+    title: "Made Fresh to Order",
+    description:
+      "Pre-order only so every dish is prepared fresh, never sitting on a shelf.",
     icon: "leaf",
   },
   {
-    id: "delivery",
-    title: "Fast Delivery",
+    id: "homemade",
+    title: "Homemade with Love",
     description:
-      "Hot lasagna at your door in 30 minutes or less. Insulated packaging keeps every layer perfect.",
-    icon: "truck",
-  },
-  {
-    id: "quality",
-    title: "Premium Quality",
-    description:
-      "Every dish is crafted by award-winning chefs using time-honored Italian techniques.",
+      "Small-batch, home-kitchen quality crafted by jijah with care in every layer.",
     icon: "award",
   },
   {
-    id: "chef",
-    title: "Chef Recommended",
+    id: "easy",
+    title: "Easy WhatsApp Ordering",
     description:
-      "Our recipes are developed and approved by Michelin-trained chefs for an unforgettable taste.",
-    icon: "chef",
+      "Order via WhatsApp — simple, fast, and personal. No calls, just message us.",
+    icon: "truck",
   },
 ];
 
@@ -42,32 +54,35 @@ export const navLinks = [
   { label: "Home", href: "/" },
   { label: "Menu", href: "/menu" },
   { label: "About", href: "/#about" },
-  { label: "Testimonials", href: "/#testimonials" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Reviews", href: "/#testimonials" },
+  { label: "Order", href: "/#contact" },
 ];
 
 export const footerLinks = {
   company: [
     { label: "About Us", href: "/#about" },
     { label: "Our Menu", href: "/menu" },
-    { label: "Testimonials", href: "/#testimonials" },
-    { label: "Contact", href: "/#contact" },
+    { label: "Reviews", href: "/#testimonials" },
+    { label: "Order via WhatsApp", href: brand.whatsapp },
   ],
   support: [
-    { label: "FAQ", href: "/#contact" },
-    { label: "Delivery Info", href: "/#contact" },
-    { label: "Privacy Policy", href: "/#contact" },
-    { label: "Terms of Service", href: "/#contact" },
+    { label: "Pre-Order Info", href: "/#contact" },
+    { label: "Operating Hours", href: "/#contact" },
+    { label: "Instagram", href: brand.instagram },
+    { label: "WhatsApp", href: brand.whatsapp },
   ],
 };
 
 export const contactInfo = {
-  phone: "+1 (555) 123-4567",
-  email: "hello@lasagnalab.com",
-  address: "123 Via Roma Street, Little Italy, New York, NY 10013",
+  whatsapp: brand.whatsapp,
+  whatsappLabel: "WhatsApp Only (No Calls)",
+  instagram: brand.instagram,
+  instagramHandle: "@thecreamypastaco",
+  location: brand.location,
+  hours: brand.hours,
+  orderNote: brand.orderNote,
   social: [
-    { label: "Instagram", href: "https://instagram.com" },
-    { label: "Facebook", href: "https://facebook.com" },
-    { label: "Twitter", href: "https://twitter.com" },
+    { label: "Instagram", href: brand.instagram },
+    { label: "WhatsApp", href: brand.whatsapp },
   ],
 };

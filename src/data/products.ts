@@ -1,85 +1,95 @@
 import type { Product } from "../types";
 
+const img = (path: string) =>
+  `https://images.unsplash.com/${path}?auto=format&fit=crop&w=700&h=500&q=80`;
+
+const images = {
+  lasagnaRegular: img("photo-1574894709920-11b28e7367e3"),
+  lasagnaLarge: img("photo-1481391319762-47dff72954d9"),
+  lasagnaPetite: img("photo-1476124369491-e7addf5db371"),
+  macaroniRegular: img("photo-1621996346565-e3dbc646d9a9"),
+  macaroniLarge: img("photo-1512058564366-18510be2db19"),
+};
+
 export const products: Product[] = [
   {
-    id: "classic-beef",
-    name: "Classic Beef Lasagna",
+    id: "lasagna-regular",
+    name: "Handsome Regular Lasagna",
     description:
-      "Layers of slow-braised beef ragù, fresh pasta sheets, and creamy béchamel baked to golden perfection.",
-    price: 18.99,
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&h=400&fit=crop",
-    category: "classic",
-    tags: ["beef", "classic", "bestseller"],
+      "Rich, creamy beef or chicken lasagna baked golden in our signature tray. Perfect for a satisfying solo meal.",
+    price: 16,
+    rating: 5,
+    image: images.lasagnaRegular,
+    category: "lasagna",
+    tags: ["lasagna", "regular", "bestseller"],
+    size: "Handsome Regular",
+    serves: "1 pax",
+    dimensions: "10.7 × 15.9 × 3.9 cm",
+    protein: "Beef / Chicken",
   },
   {
-    id: "chicken-alfredo",
-    name: "Chicken Alfredo Lasagna",
+    id: "lasagna-large",
+    name: "Happy Large Lasagna",
     description:
-      "Tender grilled chicken with rich Alfredo sauce, spinach, and three-cheese blend in every layer.",
-    price: 17.99,
-    rating: 4.8,
-    image:
-      "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=400&fit=crop",
-    category: "chicken",
-    tags: ["chicken", "alfredo", "creamy"],
+      "Our family-size lasagna — layers of creamy pasta and hearty filling. Ideal for sharing at gatherings.",
+    price: 57,
+    rating: 5,
+    image: images.lasagnaLarge,
+    category: "lasagna",
+    tags: ["lasagna", "large", "sharing"],
+    size: "Happy Large",
+    serves: "4 pax",
+    dimensions: "20.7 × 20.7 × 4.5 cm",
+    protein: "Beef / Chicken",
   },
   {
-    id: "seafood",
-    name: "Seafood Lasagna",
+    id: "lasagna-petite",
+    name: "Pretty Petite Lasagna",
     description:
-      "Fresh shrimp, scallops, and crab in a delicate white wine cream sauce with herb-infused pasta.",
-    price: 24.99,
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&h=400&fit=crop",
-    category: "seafood",
-    tags: ["seafood", "premium"],
+      "A pack of 6 adorable mini lasagnas — great for parties, gifts, or trying both beef and chicken.",
+    price: 35,
+    rating: 5,
+    image: images.lasagnaPetite,
+    category: "lasagna",
+    tags: ["lasagna", "petite", "party"],
+    size: "Pretty Petite Pack of 6",
+    serves: "6 pieces",
+    dimensions: "7.5 × 10.5 × 3.5 cm each",
+    protein: "Beef / Chicken",
   },
   {
-    id: "vegetarian",
-    name: "Vegetarian Lasagna",
+    id: "macaroni-regular",
+    name: "Handsome Regular Baked Macaroni",
     description:
-      "Roasted seasonal vegetables, ricotta, and marinara layered with fresh basil and mozzarella.",
-    price: 16.99,
-    rating: 4.7,
-    image:
-      "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&h=400&fit=crop",
-    category: "vegetarian",
-    tags: ["vegetarian", "healthy"],
+      "Creamy baked macaroni with your choice of beef or chicken — comfort food at its finest, made fresh to order.",
+    price: 15,
+    rating: 5,
+    image: images.macaroniRegular,
+    category: "macaroni",
+    tags: ["macaroni", "regular", "creamy"],
+    size: "Handsome Regular",
+    serves: "1 pax",
+    dimensions: "10.7 × 15.9 × 3.9 cm",
+    protein: "Beef / Chicken",
   },
   {
-    id: "truffle-mushroom",
-    name: "Truffle Mushroom Lasagna",
+    id: "macaroni-large",
+    name: "Happy Large Baked Macaroni",
     description:
-      "Wild mushrooms sautéed in truffle oil with porcini cream sauce and aged Parmigiano-Reggiano.",
-    price: 22.99,
-    rating: 5.0,
-    image:
-      "https://images.unsplash.com/photo-1604383536976-5e6452a093ca?w=600&h=400&fit=crop",
-    category: "premium",
-    tags: ["truffle", "mushroom", "premium"],
-  },
-  {
-    id: "spicy-mexican",
-    name: "Spicy Mexican Lasagna",
-    description:
-      "Bold chipotle beef, black beans, corn, and pepper jack cheese with a zesty salsa verde.",
-    price: 19.99,
-    rating: 4.6,
-    image:
-      "https://images.unsplash.com/photo-1626700051175-6818013e5786?w=600&h=400&fit=crop",
-    category: "spicy",
-    tags: ["spicy", "mexican", "bold"],
+      "Generous tray of luscious baked macaroni — cheesy, creamy, and baked until perfectly golden on top.",
+    price: 55,
+    rating: 5,
+    image: images.macaroniLarge,
+    category: "macaroni",
+    tags: ["macaroni", "large", "sharing"],
+    size: "Happy Large",
+    serves: "4 pax",
+    dimensions: "20.7 × 20.7 × 4.5 cm",
+    protein: "Beef / Chicken",
   },
 ];
 
 export const categoryLabels: Record<Product["category"], string> = {
-  classic: "Classic",
-  chicken: "Chicken",
-  seafood: "Seafood",
-  vegetarian: "Vegetarian",
-  premium: "Premium",
-  spicy: "Spicy",
+  lasagna: "Lasagna",
+  macaroni: "Baked Macaroni",
 };

@@ -1,81 +1,78 @@
-import { Target, Eye, Heart } from "lucide-react";
+import { MapPin, Clock, MessageCircle } from "lucide-react";
+import { SocialIcon } from "../ui/SocialIcon";
 import { ScrollReveal } from "../ui/ScrollReveal";
-import { GlassCard } from "../ui/GlassCard";
+import { SectionHeader, SectionWrapper } from "../ui/SectionHeader";
+import { brand, contactInfo } from "../../data/site";
 
 export function About() {
   return (
-    <section id="about" className="py-20 sm:py-28">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <ScrollReveal direction="right">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-              <img
-                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=700&h=500&fit=crop"
-                alt="Chef preparing lasagna in kitchen"
-                className="w-full h-[400px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-olive/40 to-transparent" />
-            </div>
-          </ScrollReveal>
-
-          <div>
-            <ScrollReveal>
-              <span className="text-tomato font-medium text-sm uppercase tracking-wider">
-                Our Story
-              </span>
-              <h2 className="font-display text-4xl sm:text-5xl font-bold mt-2 mb-6">
-                About LasagnaLab
-              </h2>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.1}>
-              <p className="text-olive/80 dark:text-cream/80 leading-relaxed mb-6">
-                Born from a passion for authentic Italian cuisine, LasagnaLab
-                started in a small kitchen in Little Italy, New York. Our founder,
-                Chef Marco Bellini, spent years perfecting family recipes passed
-                down through generations before sharing them with the world.
-              </p>
-              <p className="text-olive/80 dark:text-cream/80 leading-relaxed mb-8">
-                Today, we operate 15 branches across the country, each committed
-                to the same standards: premium ingredients, handcrafted layers,
-                and the warmth of a home-cooked Italian meal.
-              </p>
-            </ScrollReveal>
-
-            <div className="grid sm:grid-cols-3 gap-4">
-              {[
-                {
-                  icon: Heart,
-                  title: "Mission",
-                  text: "Bring authentic Italian lasagna to every home with uncompromising quality.",
-                },
-                {
-                  icon: Target,
-                  title: "Vision",
-                  text: "Become the world's most trusted premium lasagna brand by 2030.",
-                },
-                {
-                  icon: Eye,
-                  title: "Values",
-                  text: "Freshness, authenticity, and joy in every single bite we serve.",
-                },
-              ].map((item, index) => (
-                <ScrollReveal key={item.title} delay={0.2 + index * 0.1}>
-                  <GlassCard className="text-center h-full">
-                    <item.icon size={24} className="text-tomato mx-auto mb-2" />
-                    <h3 className="font-display font-semibold mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-olive/70 dark:text-cream/70">
-                      {item.text}
-                    </p>
-                  </GlassCard>
-                </ScrollReveal>
-              ))}
+    <SectionWrapper id="about" className="bg-cream">
+      <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+        <ScrollReveal direction="right">
+          <div className="relative rounded-[2rem] overflow-hidden premium-shadow-lg">
+            <img
+              src="https://images.unsplash.com/photo-1481391319762-47dff72954d9?auto=format&fit=crop&w=800&h=600&q=80"
+              alt="Fresh baked pasta trays"
+              className="w-full h-[320px] sm:h-[420px] object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-burgundy/60 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5 surface-card px-5 py-4">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-tomato">Our Kitchen</p>
+              <p className="font-display font-bold text-ink">Puncak Alam, Selangor</p>
             </div>
           </div>
+        </ScrollReveal>
+
+        <div>
+          <SectionHeader
+            eyebrow="Our Story"
+            title="The Creamy Pasta Co."
+            align="left"
+          />
+          <ScrollReveal delay={0.1}>
+            <p className="text-lg text-tomato leading-relaxed mb-4 font-bold">{brand.byline}</p>
+            <p className="text-ink/75 leading-relaxed mb-4 font-semibold">
+              Born from a love of creamy, comforting pasta, The Creamy Pasta Co.
+              serves homemade beef and chicken lasagna and baked macaroni from
+              our kitchen in Puncak Alam.
+            </p>
+            <p className="text-ink/75 leading-relaxed mb-8 font-semibold">
+              Every tray is baked fresh to order — never mass-produced. That&apos;s
+              the creamy difference our customers keep coming back for.
+            </p>
+          </ScrollReveal>
+
+          <div className="grid sm:grid-cols-3 gap-4">
+            {[
+              { icon: MapPin, label: "Location", value: brand.location },
+              { icon: Clock, label: "Hours", value: brand.hours },
+              { icon: MessageCircle, label: "Orders", value: "WhatsApp only" },
+            ].map((item) => (
+              <ScrollReveal key={item.label}>
+                <div className="surface-card p-4 text-center hover:-translate-y-0.5 transition-transform">
+                  <item.icon size={20} className="text-tomato mx-auto mb-2" />
+                  <p className="text-[10px] text-muted uppercase tracking-wider mb-1 font-bold">
+                    {item.label}
+                  </p>
+                  <p className="text-sm font-bold text-ink">{item.value}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          <ScrollReveal delay={0.3} className="mt-6">
+            <a
+              href={contactInfo.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-bold text-tomato hover:text-tomato-dark transition-colors"
+            >
+              <SocialIcon platform="instagram" size={16} />
+              Follow {contactInfo.instagramHandle}
+            </a>
+          </ScrollReveal>
         </div>
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

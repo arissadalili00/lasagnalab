@@ -7,15 +7,13 @@ export interface Product {
   image: string;
   category: ProductCategory;
   tags: string[];
+  size: string;
+  serves: string;
+  dimensions: string;
+  protein: string;
 }
 
-export type ProductCategory =
-  | "classic"
-  | "chicken"
-  | "seafood"
-  | "vegetarian"
-  | "premium"
-  | "spicy";
+export type ProductCategory = "lasagna" | "macaroni";
 
 export interface CartItem {
   product: Product;
@@ -52,7 +50,7 @@ export interface CheckoutFormData {
   address: string;
   city: string;
   zipCode: string;
-  paymentMethod: "card" | "paypal" | "cash";
+  paymentMethod: "bank" | "ewallet" | "cod";
   notes: string;
 }
 

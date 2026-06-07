@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from "react";
 
@@ -17,47 +16,29 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-const THEME_STORAGE_KEY = "lasagnalab-theme";
-
-function getInitialTheme(): Theme {
-  try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    if (stored === "dark" || stored === "light") return stored;
-  } catch {
-    /* ignore */
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
-
   useEffect(() => {
-    const root = document.documentElement;
-    const body = document.body;
-    if (theme === "dark") {
-      root.classList.add("dark");
-      body.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-      body.classList.remove("dark");
+    document.documentElement.classList.remove("dark");
+    document.body.classList.remove("dark");
+    try {
+      localStorage.setItem("lasagnalab-theme", "light");
+    } catch {
+      /* ignore */
     }
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
-  }, [theme]);
+  }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    /* Light-only theme for consistent food-brand contrast */
   }, []);
 
   const value = useMemo(
     () => ({
-      theme,
-      isDark: theme === "dark",
+      theme: "light" as Theme,
+      isDark: false,
       toggleTheme,
     }),
-    [theme, toggleTheme]
+    [toggleTheme]
   );
 
   return (

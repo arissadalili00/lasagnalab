@@ -1,98 +1,82 @@
 import { Link } from "react-router-dom";
-import { ChefHat } from "lucide-react";
-import { footerLinks, contactInfo } from "../../data/site";
-import { SocialIcon } from "../ui/SocialIcon";
-
-const socialLinks = [
-  { platform: "instagram" as const, href: contactInfo.social[0].href, label: "Instagram" },
-  { platform: "facebook" as const, href: contactInfo.social[1].href, label: "Facebook" },
-  { platform: "twitter" as const, href: contactInfo.social[2].href, label: "Twitter" },
-];
+import { ArrowUpRight } from "lucide-react";
+import { footerLinks, contactInfo, brand } from "../../data/site";
+import { BrandLogo } from "../ui/BrandLogo";
 
 export function Footer() {
   return (
-    <footer className="bg-olive text-cream/80 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-          <div>
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="p-2 rounded-xl bg-tomato text-cream">
-                <ChefHat size={20} />
-              </div>
-              <span className="font-display text-xl font-bold text-cream">
-                Lasagna<span className="text-tomato">Lab</span>
-              </span>
-            </Link>
-            <p className="text-sm leading-relaxed text-cream/60 mb-4">
-              Premium handcrafted lasagna made with authentic Italian recipes
-              and the finest ingredients, delivered fresh to your door.
+    <footer className="bg-ink text-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8 safe-bottom">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <BrandLogo size="sm" light />
+            <p className="text-sm leading-relaxed text-white/55 mt-5 mb-4 max-w-xs font-medium">
+              {brand.tagline}. Homemade lasagna & baked macaroni from Puncak Alam.
             </p>
-            <div className="flex gap-3">
-              {socialLinks.map(({ platform, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-cream/10 hover:bg-tomato transition-colors"
-                  aria-label={label}
-                >
-                  <SocialIcon platform={platform} />
-                </a>
-              ))}
+            <a
+              href={brand.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-white/50 hover:text-tomato transition-colors font-semibold"
+            >
+              {contactInfo.instagramHandle}
+            </a>
+          </div>
+
+          {[
+            { title: "Links", links: footerLinks.company },
+            { title: "Info", links: footerLinks.support },
+          ].map((section) => (
+            <div key={section.title}>
+              <h3 className="font-display font-bold text-base text-white mb-4 uppercase tracking-wide">
+                {section.title}
+              </h3>
+              <ul className="space-y-2.5">
+                {section.links.map((link) => (
+                  <li key={link.label}>
+                    {link.href.startsWith("http") ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group inline-flex items-center gap-1 text-sm text-white/55 hover:text-tomato transition-colors font-medium"
+                      >
+                        {link.label}
+                        <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100" />
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.href}
+                        className="group inline-flex items-center gap-1 text-sm text-white/55 hover:text-tomato transition-colors font-medium"
+                      >
+                        {link.label}
+                        <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100" />
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          ))}
 
           <div>
-            <h3 className="font-display text-lg font-semibold text-cream mb-4">
-              Company
-            </h3>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.href}
-                    className="text-sm hover:text-tomato transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-display text-lg font-semibold text-cream mb-4">
-              Support
-            </h3>
-            <ul className="space-y-2">
-              {footerLinks.support.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.href}
-                    className="text-sm hover:text-tomato transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-display text-lg font-semibold text-cream mb-4">
+            <h3 className="font-display font-bold text-base text-white mb-4 uppercase tracking-wide">
               Contact
             </h3>
-            <ul className="space-y-2 text-sm">
-              <li>{contactInfo.phone}</li>
-              <li>{contactInfo.email}</li>
-              <li className="text-cream/60">{contactInfo.address}</li>
+            <ul className="space-y-2 text-sm text-white/55 font-medium">
+              <li>{contactInfo.location}</li>
+              <li>{contactInfo.hours}</li>
+              <li>
+                <a href={contactInfo.whatsapp} className="hover:text-tomato transition-colors">
+                  WhatsApp to order
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-cream/10 pt-8 text-center text-sm text-cream/50">
-          <p>&copy; {new Date().getFullYear()} LasagnaLab. All rights reserved.</p>
+        <div className="border-t border-white/10 pt-6 text-center text-xs text-white/35 font-medium">
+          <p>&copy; {new Date().getFullYear()} The Creamy Pasta Co. {brand.byline}</p>
         </div>
       </div>
     </footer>

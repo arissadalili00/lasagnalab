@@ -12,22 +12,22 @@ export function RatingStars({
   showValue = false,
 }: RatingStarsProps) {
   return (
-    <div className="flex items-center gap-1" aria-label={`Rating: ${rating} out of 5`}>
+    <div className="flex items-center gap-0.5" aria-label={`Rating: ${rating} out of 5`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
           size={size}
           className={
             i < Math.floor(rating)
-              ? "fill-tomato text-tomato"
+              ? "fill-gold text-gold"
               : i < rating
-                ? "fill-tomato/50 text-tomato"
-                : "fill-olive/10 text-olive/20 dark:fill-cream/10 dark:text-cream/20"
+                ? "fill-gold/50 text-gold"
+                : "fill-linen text-linen"
           }
         />
       ))}
       {showValue && (
-        <span className="ml-1 text-sm font-medium text-olive/70 dark:text-cream/70">
+        <span className="ml-1 text-sm font-bold text-muted">
           {rating.toFixed(1)}
         </span>
       )}
