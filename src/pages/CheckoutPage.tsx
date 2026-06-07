@@ -2,8 +2,6 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Building2,
-  Smartphone,
-  Banknote,
   ArrowLeft,
   QrCode,
   Copy,
@@ -36,7 +34,6 @@ const initialForm: CheckoutFormData = {
   address: "",
   city: "",
   zipCode: "",
-  paymentMethod: "bank",
   notes: "",
 };
 
@@ -104,22 +101,7 @@ export function CheckoutPage() {
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
-    if (form.paymentMethod === "cod") {
-      await finalizeOrder({
-        orderId: generateOrderId(),
-        shortName: user.shortName,
-        phone: form.phone,
-        items: [...items],
-        form,
-        subtotal,
-        tax,
-        deliveryFee,
-        total,
-      });
-    } else {
-      setStep("payment");
-    }
+    setStep("payment");
   };
 
   const handlePaymentConfirm = async () => {
@@ -196,9 +178,9 @@ export function CheckoutPage() {
               Pay Now
             </h1>
             <p className="text-muted mt-2">
-              Scan the QR, pay{" "}
-              <span className="font-bold text-tomato">{formatCurrency(total)}</span>
-              , then upload your payment screenshot.
+              Pay{" "}
+              <span className="font-bold text-tomato">{formatCurrency(total)}</span>{" "}
+              via bank transfer or QR scan, then upload your payment screenshot.
             </p>
           </ScrollReveal>
 
@@ -207,7 +189,7 @@ export function CheckoutPage() {
               <div className="mb-6">
                 <div className="inline-flex items-center gap-2 text-sm font-medium text-muted mb-4">
                   <QrCode size={18} className="text-tomato" />
-                  Scan to pay via DuitNow / E-Wallet
+                  Scan to pay via DuitNow / QR
                 </div>
                 <div className="mx-auto w-fit p-4 rounded-2xl border-2 border-linen bg-white shadow-sm">
                   <img
@@ -219,6 +201,10 @@ export function CheckoutPage() {
               </div>
 
               <div className="text-left space-y-3 mb-6 p-4 rounded-xl bg-cream-dark/50 border border-linen">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted mb-1">
+                  <Building2 size={18} className="text-tomato" />
+                  Or transfer to our bank account
+                </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted">Bank</span>
                   <span className="font-medium">{payment.bankName}</span>
@@ -434,58 +420,6 @@ export function CheckoutPage() {
                   </div>
                 </GlassCard>
               </ScrollReveal>
-
-              <ScrollReveal delay={0.2}>
-                <GlassCard>
-                  <h2 className="font-display text-xl font-semibold mb-5">
-                    Payment Method
-                  </h2>
-                  <div className="grid sm:grid-cols-3 gap-3">
-                    {[
-                      {
-                        value: "bank" as const,
-                        label: "Bank Transfer",
-                        icon: Building2,
-                      },
-                      {
-                        value: "ewallet" as const,
-                        label: "E-Wallet",
-                        icon: Smartphone,
-                      },
-                      {
-                        value: "cod" as const,
-                        label: "Cash on Pickup",
-                        icon: Banknote,
-                      },
-                    ].map((method) => (
-                      <button
-                        key={method.value}
-                        type="button"
-                        onClick={() =>
-                          updateField("paymentMethod", method.value)
-                        }
-                        className={`flex flex-col items-center gap-2 p-4 min-h-[72px] rounded-xl border-2 transition-all active:scale-[0.98] ${
-                          form.paymentMethod === method.value
-                            ? "border-tomato bg-tomato/5"
-                            : "border-linen hover:border-tomato/40 bg-surface"
-                        }`}
-                      >
-                        <method.icon size={24} className="text-tomato" />
-                        <span className="text-sm font-medium">
-                          {method.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  {(form.paymentMethod === "bank" ||
-                    form.paymentMethod === "ewallet") && (
-                    <p className="text-xs text-muted mt-4">
-                      Next step: scan our QR code and upload your payment
-                      screenshot.
-                    </p>
-                  )}
-                </GlassCard>
-              </ScrollReveal>
             </div>
 
             <ScrollReveal delay={0.15} className="order-1 lg:order-2">
@@ -531,10 +465,8 @@ export function CheckoutPage() {
                   </div>
                 </div>
                 <p className="text-xs text-muted mt-4">
-                  {form.paymentMethod === "cod"
-                    ? "Cash on pickup — receipt emailed to you."
-                    : "Pay via QR + screenshot, then receipt emailed to you."}{" "}
-                  Open {brand.hours}.
+                  Next step: pay via QR or bank transfer and upload your
+                  screenshot. Receipt emailed to you. Open {brand.hours}.
                 </p>
                 <Button
                   type="submit"
@@ -542,9 +474,7 @@ export function CheckoutPage() {
                   className="w-full mt-4 min-h-[48px]"
                   isLoading={isSubmitting}
                 >
-                  {form.paymentMethod === "cod"
-                    ? "Place Order"
-                    : "Proceed to Payment"}
+                  Proceed to Payment
                 </Button>
               </GlassCard>
             </ScrollReveal>

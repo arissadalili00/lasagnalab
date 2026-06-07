@@ -45,13 +45,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         disabled={disabled || isLoading}
-        className={`inline-flex items-center justify-center gap-2 font-body transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomato/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 min-h-[44px] ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+        className={`inline-flex items-center justify-center gap-2 font-body transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomato/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 min-h-[44px] group ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
         {...props}
       >
         {isLoading ? (
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-        ) : null}
-        <span className="relative">{children}</span>
+        ) : (
+          children
+        )}
       </button>
     );
   }

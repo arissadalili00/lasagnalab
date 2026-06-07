@@ -47,7 +47,6 @@ export interface CheckoutFormData {
   address: string;
   city: string;
   zipCode: string;
-  paymentMethod: "bank" | "ewallet" | "cod";
   notes: string;
 }
 

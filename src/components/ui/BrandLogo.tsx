@@ -4,6 +4,8 @@ interface BrandLogoProps {
   size?: "sm" | "md" | "lg";
   light?: boolean;
   compact?: boolean;
+  asLink?: boolean;
+  className?: string;
 }
 
 const sizes = {
@@ -12,13 +14,19 @@ const sizes = {
   lg: { circle: "w-14 h-14", title: "text-xl", sub: "text-sm" },
 };
 
-export function BrandLogo({ size = "md", light = false, compact = false }: BrandLogoProps) {
+export function BrandLogo({
+  size = "md",
+  light = false,
+  compact = false,
+  asLink = true,
+  className = "",
+}: BrandLogoProps) {
   const s = sizes[size];
   const textColor = light ? "text-white" : "text-ink";
   const subColor = light ? "text-white/60" : "text-muted";
 
-  return (
-    <Link to="/" className="flex items-center gap-2.5 group min-w-0" aria-label="The Creamy Pasta Co. home">
+  const content = (
+    <>
       <div
         className={`${s.circle} rounded-2xl bg-tomato flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(242,92,5,0.4)] group-hover:scale-105 transition-transform`}
       >
@@ -48,6 +56,22 @@ export function BrandLogo({ size = "md", light = false, compact = false }: Brand
           </p>
         )}
       </div>
-    </Link>
+    </>
+  );
+
+  const wrapperClass = `flex items-center gap-2.5 group min-w-0 ${className}`;
+
+  if (asLink) {
+    return (
+      <Link to="/" className={wrapperClass} aria-label="The Creamy Pasta Co. home">
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div className={wrapperClass} aria-label="The Creamy Pasta Co.">
+      {content}
+    </div>
   );
 }

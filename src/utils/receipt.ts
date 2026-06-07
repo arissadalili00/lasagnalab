@@ -4,11 +4,7 @@ import { brand, emailConfig } from "../data/site";
 
 const ORDERS_KEY = "lasagnalab-orders";
 
-const paymentLabels: Record<OrderSummary["form"]["paymentMethod"], string> = {
-  bank: "Bank Transfer",
-  ewallet: "E-Wallet",
-  cod: "Cash on Pickup",
-};
+const paymentLabel = "Bank Transfer / QR Code";
 
 export interface SavedOrder extends OrderSummary {
   placedAt: string;
@@ -45,7 +41,7 @@ export function buildFullReceiptText(order: OrderSummary): string {
     order.tax > 0 ? `Tax:         ${formatCurrency(order.tax)}` : null,
     `TOTAL:       ${formatCurrency(order.total)}`,
     "",
-    `Payment:     ${paymentLabels[order.form.paymentMethod]}`,
+    `Payment:     ${paymentLabel}`,
     "",
     "────────────────────────────────",
     "DELIVERY",

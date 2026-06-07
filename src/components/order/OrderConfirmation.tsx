@@ -47,7 +47,7 @@ export function OrderConfirmation({
   const [resendingEmail, setResendingEmail] = useState(false);
 
   const receiptText = buildFullReceiptText(order);
-  const needsPaymentProof = order.form.paymentMethod !== "cod";
+  const needsPaymentProof = true;
 
   const handleCopy = async () => {
     const ok = await copyReceiptToClipboard(order);

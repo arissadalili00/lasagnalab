@@ -14,11 +14,7 @@ export interface OrderSummary {
   total: number;
 }
 
-const paymentLabels: Record<CheckoutFormData["paymentMethod"], string> = {
-  bank: "Bank Transfer",
-  ewallet: "E-Wallet",
-  cod: "Cash on Pickup",
-};
+const paymentLabel = "Bank Transfer / QR Code";
 
 export function buildOrderReceiptMessage(order: OrderSummary): string {
   const itemLines = order.items
@@ -39,7 +35,7 @@ export function buildOrderReceiptMessage(order: OrderSummary): string {
     itemLines,
     "",
     `*Total: ${formatCurrency(order.total)}*`,
-    `*Payment:* ${paymentLabels[order.form.paymentMethod]}`,
+    `*Payment:* ${paymentLabel}`,
     "",
     "*Delivery Address:*",
     `${order.form.address}, ${order.form.city} ${order.form.zipCode}`,
