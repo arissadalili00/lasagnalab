@@ -72,7 +72,7 @@ export function OrderConfirmation({
       : emailReceiptStatus === "failed"
         ? `Could not send to ${customerEmail} — tap Resend below`
         : emailReceiptStatus === "not_configured"
-          ? "EmailJS not set up yet — add keys in .env file"
+          ? "Email keys missing — restart dev server after updating .env"
           : "Sending receipt…";
 
   const steps = [
@@ -167,8 +167,9 @@ export function OrderConfirmation({
             <div className="text-xs text-muted text-left">
               {emailReceiptStatus === "not_configured" ? (
                 <>
-                  <strong className="text-ink">Email not configured.</strong> Add
-                  your EmailJS keys in `.env` so receipts send from{" "}
+                  <strong className="text-ink">Email not configured.</strong>{" "}
+                  Check your EmailJS keys in `.env`, then restart the dev server
+                  (`npm run dev`) so receipts send from{" "}
                   {emailConfig.companyEmail}.
                 </>
               ) : (

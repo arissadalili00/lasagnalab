@@ -10,17 +10,43 @@ export interface EmailSendResult {
   errorMessage?: string;
 }
 
+interface EmailJsRuntimeConfig {
+  serviceId: string;
+  templateId: string;
+  publicKey: string;
+  privateKey: string;
+}
+
+declare const __EMAILJS_CONFIG__: EmailJsRuntimeConfig;
+
+function readEnv(key: keyof ImportMetaEnv): string {
+  const value = import.meta.env[key];
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function getEmailJsConfig(): EmailJsRuntimeConfig {
+  const fromDefine =
+    typeof __EMAILJS_CONFIG__ !== "undefined" ? __EMAILJS_CONFIG__ : null;
+
+  return {
+    serviceId:
+      fromDefine?.serviceId || readEnv("VITE_EMAILJS_SERVICE_ID"),
+    templateId:
+      fromDefine?.templateId || readEnv("VITE_EMAILJS_TEMPLATE_ID"),
+    publicKey:
+      fromDefine?.publicKey || readEnv("VITE_EMAILJS_PUBLIC_KEY"),
+    privateKey:
+      fromDefine?.privateKey || readEnv("VITE_EMAILJS_PRIVATE_KEY") || "",
+  };
+}
+
 export function isEmailConfigured(): boolean {
-  return Boolean(
-    import.meta.env.VITE_EMAILJS_SERVICE_ID &&
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID &&
-      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-  );
+  const { serviceId, templateId, publicKey } = getEmailJsConfig();
+  return Boolean(serviceId && templateId && publicKey);
 }
 
 function getEmailJsOptions() {
-  const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-  const privateKey = import.meta.env.VITE_EMAILJS_PRIVATE_KEY;
+  const { publicKey, privateKey } = getEmailJsConfig();
 
   return {
     publicKey,
@@ -49,8 +75,7 @@ export async function sendOrderReceiptEmail(
   order: OrderSummary,
   customerEmail: string
 ): Promise<void> {
-  const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-  const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const { serviceId, templateId } = getEmailJsConfig();
 
   if (!isEmailConfigured()) {
     throw new Error("EMAIL_NOT_CONFIGURED");
