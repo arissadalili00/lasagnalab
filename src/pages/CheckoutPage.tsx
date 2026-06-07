@@ -1,13 +1,10 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import {
   Building2,
   Smartphone,
   Banknote,
-  CheckCircle,
   ArrowLeft,
-  MessageCircle,
   QrCode,
   Copy,
   Check,
@@ -19,19 +16,18 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { formatCurrency } from "../utils/formatCurrency";
 import { generateOrderId } from "../utils/order";
+import { saveOrderToHistory } from "../utils/receipt";
 import {
-  buildCustomerReceiptMessage,
-  buildCustomerReceiptResendUrl,
-  buildOrderReceiptMessage,
-  buildWhatsAppOrderUrl,
-  sendOrderWhatsAppMessages,
-  type OrderSummary,
-} from "../utils/whatsapp";
+  sendOrderReceiptEmailSafe,
+  type EmailReceiptStatus,
+} from "../utils/email";
+import type { OrderSummary } from "../utils/whatsapp";
 import type { CheckoutFormData } from "../types";
-import { brand, payment } from "../data/site";
+import { brand, payment, emailConfig } from "../data/site";
 import { Button } from "../components/ui/Button";
 import { GlassCard } from "../components/ui/GlassCard";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
+import { OrderConfirmation } from "../components/order/OrderConfirmation";
 
 type CheckoutStep = "form" | "payment" | "success";
 
@@ -55,6 +51,11 @@ export function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [order, setOrder] = useState<OrderSummary | null>(null);
+  const [emailReceiptStatus, setEmailReceiptStatus] =
+    useState<EmailReceiptStatus | null>(null);
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string | null>(
+    null
+  );
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(
     null
@@ -83,23 +84,28 @@ export function CheckoutPage() {
     setScreenshotPreview(null);
   };
 
-  const placeOrder = (orderSummary: OrderSummary) => {
-    sendOrderWhatsAppMessages(orderSummary);
+  const finalizeOrder = async (orderSummary: OrderSummary) => {
+    if (!user?.email) return;
+
+    setIsSubmitting(true);
+
+    const result = await sendOrderReceiptEmailSafe(orderSummary, user.email);
+    setEmailReceiptStatus(result.status);
+    setEmailErrorMessage(result.errorMessage ?? null);
+
+    saveOrderToHistory(orderSummary);
     setOrder(orderSummary);
     setStep("success");
     clearCart();
+    setIsSubmitting(false);
   };
 
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setIsSubmitting(false);
-
     if (form.paymentMethod === "cod") {
-      placeOrder({
+      await finalizeOrder({
         orderId: generateOrderId(),
         shortName: user.shortName,
         phone: user.phone,
@@ -118,11 +124,7 @@ export function CheckoutPage() {
   const handlePaymentConfirm = async () => {
     if (!user || !paymentScreenshot) return;
 
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setIsSubmitting(false);
-
-    placeOrder({
+    await finalizeOrder({
       orderId: generateOrderId(),
       shortName: user.shortName,
       phone: user.phone,
@@ -164,81 +166,15 @@ export function CheckoutPage() {
   }
 
   if (step === "success" && order) {
-    const shopOrderUrl = buildWhatsAppOrderUrl(buildOrderReceiptMessage(order));
-    const customerReceiptUrl = buildCustomerReceiptResendUrl(order);
-    const customerReceipt = buildCustomerReceiptMessage(order);
-
     return (
-      <div className="pt-[5.5rem] sm:pt-32 pb-20">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-lg mx-auto px-4 text-center"
-        >
-          <div className="inline-flex p-4 rounded-full bg-green/10 text-green mb-6">
-            <CheckCircle size={48} />
-          </div>
-          <h1 className="font-display text-4xl font-bold mb-2">
-            All Order Receive!
-          </h1>
-          <p className="text-muted mb-2">
-            Thank you, {order.shortName}! Your ordering process is complete.
-          </p>
-          <p className="text-sm font-mono text-tomato mb-6">{order.orderId}</p>
-
-          <GlassCard className="text-left mb-6">
-            <h2 className="font-display text-lg font-semibold mb-3">
-              Order Receipt
-            </h2>
-            <pre className="text-sm text-muted whitespace-pre-wrap font-body leading-relaxed">
-              {customerReceipt}
-            </pre>
-
-            {screenshotPreview && order.form.paymentMethod !== "cod" && (
-              <div className="mt-4 pt-4 border-t border-linen">
-                <p className="text-xs font-medium text-ink mb-2">
-                  Your payment screenshot:
-                </p>
-                <img
-                  src={screenshotPreview}
-                  alt="Payment screenshot"
-                  className="w-full max-h-48 object-contain rounded-xl border border-linen"
-                />
-              </div>
-            )}
-
-            <p className="text-xs text-muted mt-4 pt-4 border-t border-linen">
-              WhatsApp opened twice: once to send your order to the shop, and
-              once with this receipt to{" "}
-              <strong className="text-ink">{order.phone}</strong>. Tap Send in
-              each chat to finish.{" "}
-              {order.form.paymentMethod !== "cod" && (
-                <>
-                  Attach your payment screenshot in the shop chat.
-                </>
-              )}
-            </p>
-          </GlassCard>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href={customerReceiptUrl} target="_blank" rel="noopener noreferrer">
-              <Button size="lg">
-                <MessageCircle size={20} />
-                Resend Receipt to {order.phone}
-              </Button>
-            </a>
-            <a href={shopOrderUrl} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="outline">
-                <MessageCircle size={20} />
-                Resend Order to Shop
-              </Button>
-            </a>
-            <Button onClick={() => navigate("/")} size="lg" variant="outline">
-              Back to Home
-            </Button>
-          </div>
-        </motion.div>
-      </div>
+      <OrderConfirmation
+        order={order}
+        customerEmail={user?.email}
+        emailReceiptStatus={emailReceiptStatus}
+        emailErrorMessage={emailErrorMessage}
+        screenshotPreview={screenshotPreview}
+        onGoHome={() => navigate("/")}
+      />
     );
   }
 
@@ -359,8 +295,9 @@ export function CheckoutPage() {
               </div>
 
               <p className="text-sm text-muted mb-6">
-                After uploading, tap below to receive your order receipt on
-                WhatsApp ({user?.phone}).
+                After uploading, we&apos;ll email your receipt to{" "}
+                <span className="font-medium text-ink">{user?.email}</span> from{" "}
+                {emailConfig.companyEmail}, then show your confirmation.
               </p>
 
               <Button
@@ -370,7 +307,7 @@ export function CheckoutPage() {
                 disabled={!paymentScreenshot}
                 onClick={handlePaymentConfirm}
               >
-                Place Order &amp; Get WhatsApp Receipt
+                Place Order &amp; Email Receipt
               </Button>
             </GlassCard>
           </ScrollReveal>

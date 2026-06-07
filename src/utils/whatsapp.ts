@@ -101,15 +101,8 @@ export function openWhatsAppLink(url: string): void {
   document.body.removeChild(link);
 }
 
-/** Opens receipt to customer's login number, then order to shop. */
-export function sendOrderWhatsAppMessages(order: OrderSummary): void {
-  const businessUrl = buildWhatsAppOrderUrl(buildOrderReceiptMessage(order));
-  const customerUrl = buildCustomerReceiptWhatsAppUrl(order);
-
-  openWhatsAppLink(customerUrl);
-  openWhatsAppLink(businessUrl);
-}
-
-export function buildCustomerReceiptResendUrl(order: OrderSummary): string {
-  return buildCustomerReceiptWhatsAppUrl(order);
+/** Opens shop WhatsApp with the order message. */
+export function sendOrderToShop(order: OrderSummary): void {
+  const url = buildWhatsAppOrderUrl(buildOrderReceiptMessage(order));
+  openWhatsAppLink(url);
 }

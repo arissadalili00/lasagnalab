@@ -12,6 +12,11 @@ export const brand = {
   orderNote: "Pre-order only · WhatsApp to order (no calls)",
 };
 
+/** Company email — connect this Gmail in EmailJS (no password in code). */
+export const emailConfig = {
+  companyEmail: "thecreamypastaco@gmail.com",
+};
+
 /** Update whatsappPhone with your business number (country code, no + or spaces). */
 export const payment = {
   whatsappPhone: "60123456789",
