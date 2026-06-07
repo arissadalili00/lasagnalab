@@ -12,6 +12,16 @@ export const brand = {
   orderNote: "Pre-order only · WhatsApp to order (no calls)",
 };
 
+/** Update whatsappPhone with your business number (country code, no + or spaces). */
+export const payment = {
+  whatsappPhone: "60123456789",
+  qrImage: "/payment-qr.svg",
+  bankName: "Maybank",
+  accountName: "The Creamy Pasta Co.",
+  accountNumber: "1234567890",
+  ewalletLabel: "Touch 'n Go / DuitNow",
+};
+
 export const stats: Stat[] = [
   { id: "orders", value: "500+", label: "Happy Pre-Orders" },
   { id: "rating", value: "5.0", label: "Customer Rating" },

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -8,20 +8,34 @@ import {
   CheckCircle,
   ArrowLeft,
   MessageCircle,
+  QrCode,
+  Copy,
+  Check,
+  Upload,
+  ImageIcon,
+  X,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { formatCurrency } from "../utils/formatCurrency";
+import { generateOrderId } from "../utils/order";
+import {
+  buildCustomerReceiptMessage,
+  buildCustomerReceiptResendUrl,
+  buildOrderReceiptMessage,
+  buildWhatsAppOrderUrl,
+  sendOrderWhatsAppMessages,
+  type OrderSummary,
+} from "../utils/whatsapp";
 import type { CheckoutFormData } from "../types";
-import { brand } from "../data/site";
+import { brand, payment } from "../data/site";
 import { Button } from "../components/ui/Button";
 import { GlassCard } from "../components/ui/GlassCard";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
 
+type CheckoutStep = "form" | "payment" | "success";
+
 const initialForm: CheckoutFormData = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
   address: "",
   city: "",
   zipCode: "",
@@ -34,10 +48,17 @@ const inputClass =
 
 export function CheckoutPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { items, subtotal, tax, deliveryFee, total, clearCart } = useCart();
   const [form, setForm] = useState<CheckoutFormData>(initialForm);
-  const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState<CheckoutStep>("form");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [order, setOrder] = useState<OrderSummary | null>(null);
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(
+    null
+  );
 
   const updateField = <K extends keyof CheckoutFormData>(
     key: K,
@@ -46,16 +67,85 @@ export function CheckoutPage() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setSubmitted(true);
+  const handleScreenshotChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (screenshotPreview) URL.revokeObjectURL(screenshotPreview);
+
+    setPaymentScreenshot(file);
+    setScreenshotPreview(URL.createObjectURL(file));
+  };
+
+  const removeScreenshot = () => {
+    if (screenshotPreview) URL.revokeObjectURL(screenshotPreview);
+    setPaymentScreenshot(null);
+    setScreenshotPreview(null);
+  };
+
+  const placeOrder = (orderSummary: OrderSummary) => {
+    sendOrderWhatsAppMessages(orderSummary);
+    setOrder(orderSummary);
+    setStep("success");
     clearCart();
   };
 
-  if (items.length === 0 && !submitted) {
+  const handleFormSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    setIsSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    setIsSubmitting(false);
+
+    if (form.paymentMethod === "cod") {
+      placeOrder({
+        orderId: generateOrderId(),
+        shortName: user.shortName,
+        phone: user.phone,
+        items: [...items],
+        form,
+        subtotal,
+        tax,
+        deliveryFee,
+        total,
+      });
+    } else {
+      setStep("payment");
+    }
+  };
+
+  const handlePaymentConfirm = async () => {
+    if (!user || !paymentScreenshot) return;
+
+    setIsSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    setIsSubmitting(false);
+
+    placeOrder({
+      orderId: generateOrderId(),
+      shortName: user.shortName,
+      phone: user.phone,
+      items: [...items],
+      form,
+      subtotal,
+      tax,
+      deliveryFee,
+      total,
+    });
+  };
+
+  const copyAccountNumber = async () => {
+    try {
+      await navigator.clipboard.writeText(payment.accountNumber);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
+
+  if (items.length === 0 && step !== "success") {
     return (
       <div className="pt-[5.5rem] sm:pt-32 pb-20 text-center">
         <div className="max-w-md mx-auto px-4">
@@ -63,7 +153,7 @@ export function CheckoutPage() {
             Your cart is empty
           </h1>
           <p className="text-muted mb-8">
-            Add items to your cart, then confirm via WhatsApp.
+            Add items to your cart, then proceed to checkout.
           </p>
           <Link to="/menu">
             <Button size="lg">Browse Menu</Button>
@@ -73,7 +163,11 @@ export function CheckoutPage() {
     );
   }
 
-  if (submitted) {
+  if (step === "success" && order) {
+    const shopOrderUrl = buildWhatsAppOrderUrl(buildOrderReceiptMessage(order));
+    const customerReceiptUrl = buildCustomerReceiptResendUrl(order);
+    const customerReceipt = buildCustomerReceiptMessage(order);
+
     return (
       <div className="pt-[5.5rem] sm:pt-32 pb-20">
         <motion.div
@@ -84,21 +178,59 @@ export function CheckoutPage() {
           <div className="inline-flex p-4 rounded-full bg-green/10 text-green mb-6">
             <CheckCircle size={48} />
           </div>
-          <h1 className="font-display text-4xl font-bold mb-4">
-            Pre-Order Received!
+          <h1 className="font-display text-4xl font-bold mb-2">
+            All Order Receive!
           </h1>
-          <p className="text-muted mb-4">
-            Thank you, {form.firstName}! We&apos;ll prepare your order fresh.
+          <p className="text-muted mb-2">
+            Thank you, {order.shortName}! Your ordering process is complete.
           </p>
-          <p className="text-muted mb-8">
-            Please confirm your order and payment via WhatsApp so we can schedule
-            your pickup.
-          </p>
+          <p className="text-sm font-mono text-tomato mb-6">{order.orderId}</p>
+
+          <GlassCard className="text-left mb-6">
+            <h2 className="font-display text-lg font-semibold mb-3">
+              Order Receipt
+            </h2>
+            <pre className="text-sm text-muted whitespace-pre-wrap font-body leading-relaxed">
+              {customerReceipt}
+            </pre>
+
+            {screenshotPreview && order.form.paymentMethod !== "cod" && (
+              <div className="mt-4 pt-4 border-t border-linen">
+                <p className="text-xs font-medium text-ink mb-2">
+                  Your payment screenshot:
+                </p>
+                <img
+                  src={screenshotPreview}
+                  alt="Payment screenshot"
+                  className="w-full max-h-48 object-contain rounded-xl border border-linen"
+                />
+              </div>
+            )}
+
+            <p className="text-xs text-muted mt-4 pt-4 border-t border-linen">
+              WhatsApp opened twice: once to send your order to the shop, and
+              once with this receipt to{" "}
+              <strong className="text-ink">{order.phone}</strong>. Tap Send in
+              each chat to finish.{" "}
+              {order.form.paymentMethod !== "cod" && (
+                <>
+                  Attach your payment screenshot in the shop chat.
+                </>
+              )}
+            </p>
+          </GlassCard>
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href={brand.whatsapp} target="_blank" rel="noopener noreferrer">
+            <a href={customerReceiptUrl} target="_blank" rel="noopener noreferrer">
               <Button size="lg">
                 <MessageCircle size={20} />
-                Confirm on WhatsApp
+                Resend Receipt to {order.phone}
+              </Button>
+            </a>
+            <a href={shopOrderUrl} target="_blank" rel="noopener noreferrer">
+              <Button size="lg" variant="outline">
+                <MessageCircle size={20} />
+                Resend Order to Shop
               </Button>
             </a>
             <Button onClick={() => navigate("/")} size="lg" variant="outline">
@@ -106,6 +238,143 @@ export function CheckoutPage() {
             </Button>
           </div>
         </motion.div>
+      </div>
+    );
+  }
+
+  if (step === "payment") {
+    return (
+      <div className="pt-[5.5rem] sm:pt-32 pb-24 sm:pb-20 safe-bottom">
+        <div className="max-w-lg mx-auto px-4">
+          <ScrollReveal className="mb-6">
+            <button
+              type="button"
+              onClick={() => setStep("form")}
+              className="inline-flex items-center gap-2 text-muted hover:text-tomato transition-colors min-h-[44px]"
+            >
+              <ArrowLeft size={18} />
+              Back to checkout
+            </button>
+            <h1 className="font-display text-3xl sm:text-4xl font-bold mt-2">
+              Pay Now
+            </h1>
+            <p className="text-muted mt-2">
+              Scan the QR, pay{" "}
+              <span className="font-bold text-tomato">{formatCurrency(total)}</span>
+              , then upload your payment screenshot.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal>
+            <GlassCard className="text-center">
+              <div className="mb-6">
+                <div className="inline-flex items-center gap-2 text-sm font-medium text-muted mb-4">
+                  <QrCode size={18} className="text-tomato" />
+                  Scan to pay via DuitNow / E-Wallet
+                </div>
+                <div className="mx-auto w-fit p-4 rounded-2xl border-2 border-linen bg-white shadow-sm">
+                  <img
+                    src={payment.qrImage}
+                    alt="Payment QR code"
+                    className="w-56 h-56 object-contain"
+                  />
+                </div>
+              </div>
+
+              <div className="text-left space-y-3 mb-6 p-4 rounded-xl bg-cream-dark/50 border border-linen">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Bank</span>
+                  <span className="font-medium">{payment.bankName}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted">Account Name</span>
+                  <span className="font-medium">{payment.accountName}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm gap-2">
+                  <span className="text-muted">Account No.</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-medium">
+                      {payment.accountNumber}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={copyAccountNumber}
+                      className="p-1.5 rounded-lg hover:bg-surface text-muted hover:text-tomato transition-colors"
+                      aria-label="Copy account number"
+                    >
+                      {copied ? <Check size={16} /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex justify-between text-sm pt-2 border-t border-linen">
+                  <span className="text-muted">Amount</span>
+                  <span className="font-bold text-tomato text-lg">
+                    {formatCurrency(total)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-left mb-6">
+                <label className="block text-sm font-medium mb-2">
+                  Upload Payment Screenshot *
+                </label>
+
+                {!screenshotPreview ? (
+                  <label className="flex flex-col items-center justify-center gap-2 p-8 rounded-xl border-2 border-dashed border-linen hover:border-tomato/40 cursor-pointer transition-colors bg-cream-dark/30">
+                    <Upload size={28} className="text-tomato" />
+                    <span className="text-sm font-medium text-ink">
+                      Tap to upload screenshot
+                    </span>
+                    <span className="text-xs text-muted">
+                      PNG, JPG — max 5MB
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleScreenshotChange}
+                      className="sr-only"
+                    />
+                  </label>
+                ) : (
+                  <div className="relative rounded-xl border border-linen overflow-hidden">
+                    <img
+                      src={screenshotPreview}
+                      alt="Payment screenshot preview"
+                      className="w-full max-h-56 object-contain bg-cream-dark/30"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeScreenshot}
+                      className="absolute top-2 right-2 p-2 rounded-full bg-ink/70 text-white hover:bg-ink transition-colors"
+                      aria-label="Remove screenshot"
+                    >
+                      <X size={16} />
+                    </button>
+                    <div className="flex items-center gap-2 p-3 bg-green/10 text-green text-sm font-medium">
+                      <ImageIcon size={16} />
+                      Screenshot attached
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <p className="text-sm text-muted mb-6">
+                After uploading, tap below to receive your order receipt on
+                WhatsApp ({user?.phone}).
+              </p>
+
+              <Button
+                size="lg"
+                className="w-full min-h-[48px]"
+                isLoading={isSubmitting}
+                disabled={!paymentScreenshot}
+                onClick={handlePaymentConfirm}
+              >
+                Place Order &amp; Get WhatsApp Receipt
+              </Button>
+            </GlassCard>
+          </ScrollReveal>
+        </div>
       </div>
     );
   }
@@ -121,72 +390,21 @@ export function CheckoutPage() {
             <ArrowLeft size={18} />
             Continue Shopping
           </Link>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold mt-2 sm:mt-4">Checkout</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold mt-2 sm:mt-4">
+            Checkout
+          </h1>
+          {user && (
+            <p className="text-sm text-muted mt-2">
+              Ordering as{" "}
+              <span className="font-medium text-ink">{user.shortName}</span> ·{" "}
+              {user.phone}
+            </p>
+          )}
         </ScrollReveal>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleFormSubmit}>
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
             <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
-              <ScrollReveal>
-                <GlassCard>
-                  <h2 className="font-display text-xl font-semibold mb-5">
-                    Customer Information
-                  </h2>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium mb-1.5">
-                        First Name
-                      </label>
-                      <input
-                        id="firstName"
-                        required
-                        value={form.firstName}
-                        onChange={(e) => updateField("firstName", e.target.value)}
-                        className={inputClass}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium mb-1.5">
-                        Last Name
-                      </label>
-                      <input
-                        id="lastName"
-                        required
-                        value={form.lastName}
-                        onChange={(e) => updateField("lastName", e.target.value)}
-                        className={inputClass}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="checkoutEmail" className="block text-sm font-medium mb-1.5">
-                        Email
-                      </label>
-                      <input
-                        id="checkoutEmail"
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={(e) => updateField("email", e.target.value)}
-                        className={inputClass}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium mb-1.5">
-                        Phone
-                      </label>
-                      <input
-                        id="phone"
-                        type="tel"
-                        required
-                        value={form.phone}
-                        onChange={(e) => updateField("phone", e.target.value)}
-                        className={inputClass}
-                      />
-                    </div>
-                  </div>
-                </GlassCard>
-              </ScrollReveal>
-
               <ScrollReveal delay={0.1}>
                 <GlassCard>
                   <h2 className="font-display text-xl font-semibold mb-5">
@@ -194,7 +412,10 @@ export function CheckoutPage() {
                   </h2>
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="address" className="block text-sm font-medium mb-1.5">
+                      <label
+                        htmlFor="address"
+                        className="block text-sm font-medium mb-1.5"
+                      >
                         Street Address
                       </label>
                       <input
@@ -207,7 +428,10 @@ export function CheckoutPage() {
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="city" className="block text-sm font-medium mb-1.5">
+                        <label
+                          htmlFor="city"
+                          className="block text-sm font-medium mb-1.5"
+                        >
                           City
                         </label>
                         <input
@@ -219,20 +443,28 @@ export function CheckoutPage() {
                         />
                       </div>
                       <div>
-                        <label htmlFor="zipCode" className="block text-sm font-medium mb-1.5">
+                        <label
+                          htmlFor="zipCode"
+                          className="block text-sm font-medium mb-1.5"
+                        >
                           Postcode
                         </label>
                         <input
                           id="zipCode"
                           required
                           value={form.zipCode}
-                          onChange={(e) => updateField("zipCode", e.target.value)}
+                          onChange={(e) =>
+                            updateField("zipCode", e.target.value)
+                          }
                           className={inputClass}
                         />
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="notes" className="block text-sm font-medium mb-1.5">
+                      <label
+                        htmlFor="notes"
+                        className="block text-sm font-medium mb-1.5"
+                      >
                         Order Notes (beef/chicken, pickup time)
                       </label>
                       <textarea
@@ -255,14 +487,28 @@ export function CheckoutPage() {
                   </h2>
                   <div className="grid sm:grid-cols-3 gap-3">
                     {[
-                      { value: "bank" as const, label: "Bank Transfer", icon: Building2 },
-                      { value: "ewallet" as const, label: "E-Wallet", icon: Smartphone },
-                      { value: "cod" as const, label: "Cash on Pickup", icon: Banknote },
+                      {
+                        value: "bank" as const,
+                        label: "Bank Transfer",
+                        icon: Building2,
+                      },
+                      {
+                        value: "ewallet" as const,
+                        label: "E-Wallet",
+                        icon: Smartphone,
+                      },
+                      {
+                        value: "cod" as const,
+                        label: "Cash on Pickup",
+                        icon: Banknote,
+                      },
                     ].map((method) => (
                       <button
                         key={method.value}
                         type="button"
-                        onClick={() => updateField("paymentMethod", method.value)}
+                        onClick={() =>
+                          updateField("paymentMethod", method.value)
+                        }
                         className={`flex flex-col items-center gap-2 p-4 min-h-[72px] rounded-xl border-2 transition-all active:scale-[0.98] ${
                           form.paymentMethod === method.value
                             ? "border-tomato bg-tomato/5"
@@ -270,10 +516,19 @@ export function CheckoutPage() {
                         }`}
                       >
                         <method.icon size={24} className="text-tomato" />
-                        <span className="text-sm font-medium">{method.label}</span>
+                        <span className="text-sm font-medium">
+                          {method.label}
+                        </span>
                       </button>
                     ))}
                   </div>
+                  {(form.paymentMethod === "bank" ||
+                    form.paymentMethod === "ewallet") && (
+                    <p className="text-xs text-muted mt-4">
+                      Next step: scan our QR code and upload your payment
+                      screenshot.
+                    </p>
+                  )}
                 </GlassCard>
               </ScrollReveal>
             </div>
@@ -321,10 +576,20 @@ export function CheckoutPage() {
                   </div>
                 </div>
                 <p className="text-xs text-muted mt-4">
-                  Final confirmation via WhatsApp. Open {brand.hours}.
+                  {form.paymentMethod === "cod"
+                    ? "Cash on pickup — receipt sent via WhatsApp."
+                    : "Pay via QR + screenshot, then get WhatsApp receipt."}{" "}
+                  Open {brand.hours}.
                 </p>
-                <Button type="submit" size="lg" className="w-full mt-4 min-h-[48px]" isLoading={isSubmitting}>
-                  Submit Pre-Order
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full mt-4 min-h-[48px]"
+                  isLoading={isSubmitting}
+                >
+                  {form.paymentMethod === "cod"
+                    ? "Place Order"
+                    : "Proceed to Payment"}
                 </Button>
               </GlassCard>
             </ScrollReveal>

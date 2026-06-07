@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Menu, X, MessageCircle } from "lucide-react";
+import { ShoppingCart, Menu, X, MessageCircle, LogOut } from "lucide-react";
 import { navLinks, brand } from "../../data/site";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 import { BrandLogo } from "../ui/BrandLogo";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { itemCount, openCart } = useCart();
+  const { user, logout } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -57,7 +59,6 @@ export function Navbar() {
         >
           <BrandLogo size="sm" compact />
 
-          {/* Desktop nav — centered pill */}
           <ul className="hidden lg:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2 bg-cream-dark/80 rounded-xl p-1 border border-linen/60">
             {navLinks.map((link) => (
               <li key={link.href}>
@@ -77,6 +78,18 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={logout}
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-bold text-ink hover:bg-cream-dark transition-colors min-h-[44px]"
+              title={user?.phone}
+            >
+              <LogOut size={16} />
+              <span className="max-w-[100px] truncate">
+                {user?.shortName}
+              </span>
+            </button>
+
             <a
               href={brand.whatsapp}
               target="_blank"
@@ -111,7 +124,6 @@ export function Navbar() {
         </nav>
       </header>
 
-      {/* Full-screen mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -161,6 +173,17 @@ export function Navbar() {
                 </ul>
 
                 <div className="p-3 border-t border-linen shrink-0 safe-bottom space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setMobileOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 border-linen text-ink font-bold min-h-[48px] hover:bg-cream-dark"
+                  >
+                    <LogOut size={20} />
+                    Logout ({user?.shortName})
+                  </button>
                   <a
                     href={brand.whatsapp}
                     target="_blank"
