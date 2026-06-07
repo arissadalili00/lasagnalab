@@ -53,7 +53,7 @@ export function About() {
             {[
               { icon: MapPin, label: "Location", value: brand.location },
               { icon: Clock, label: "Hours", value: brand.hours },
-              { icon: MessageCircle, label: "Orders", value: "WhatsApp only" },
+              { icon: MessageCircle, label: "Orders", value: "Website only" },
             ].map((item) => (
               <ScrollReveal key={item.label}>
                 <div className="surface-card p-4 text-center hover:-translate-y-0.5 transition-transform">

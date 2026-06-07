@@ -5,11 +5,10 @@ import {
   ShoppingCart,
   Menu,
   X,
-  MessageCircle,
   LogOut,
   ChevronDown,
 } from "lucide-react";
-import { navLinks, brand } from "../../data/site";
+import { navLinks } from "../../data/site";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { BrandLogo } from "../ui/BrandLogo";
@@ -141,16 +140,6 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0">
-            <a
-              href={brand.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 lg:px-4 py-2.5 rounded-xl text-sm font-bold bg-tomato text-white hover:bg-tomato-dark transition-colors min-h-[44px] shadow-[0_4px_14px_rgba(242,92,5,0.35)]"
-            >
-              <MessageCircle size={17} />
-              <span className="hidden lg:inline">Order Now</span>
-            </a>
-
             <button
               onClick={openCart}
               className="touch-target relative rounded-xl text-ink hover:bg-cream-dark transition-colors"
@@ -294,21 +283,12 @@ export function Navbar() {
                 </ul>
 
                 <div className="p-3 border-t border-linen shrink-0 safe-bottom space-y-2">
-                  <a
-                    href={brand.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-tomato text-white font-bold min-h-[48px]"
-                  >
-                    <MessageCircle size={20} />
-                    Order on WhatsApp
-                  </a>
                   <button
                     onClick={() => {
                       setMobileOpen(false);
                       openCart();
                     }}
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border-2 border-linen text-ink font-bold min-h-[48px] hover:bg-cream-dark"
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-tomato text-white font-bold min-h-[48px]"
                   >
                     <ShoppingCart size={20} />
                     View Cart {itemCount > 0 ? `(${itemCount})` : ""}

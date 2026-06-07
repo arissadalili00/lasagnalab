@@ -9,7 +9,10 @@ export const brand = {
   whatsapp: "https://wa.link/xz1ljl",
   location: "Puncak Alam, Selangor",
   hours: "10:00 AM – 5:00 PM",
-  orderNote: "Pre-order only · WhatsApp to order (no calls)",
+  orderNote: "Pre-order only · Order via the Menu",
+  whatsappEnquiryNote: "Questions only — not for placing orders.",
+  orderCta: "Order on Website",
+  whatsappCta: "Ask a Question",
 };
 
 /** Real product & brand photos (stored in /public/images). */
@@ -74,9 +77,9 @@ export const whyChooseUs: WhyChooseItem[] = [
   },
   {
     id: "easy",
-    title: "Easy WhatsApp Ordering",
+    title: "Easy Online Ordering",
     description:
-      "Order via WhatsApp — simple, fast, and personal. No calls, just message us.",
+      "Order on our website — pick your tray, checkout, pay online, and get your receipt by email.",
     icon: "truck",
   },
 ];
@@ -94,26 +97,27 @@ export const footerLinks = {
     { label: "About Us", href: "#about" },
     { label: "Our Menu", href: "#menu" },
     { label: "Reviews", href: "#testimonials" },
-    { label: "Order via WhatsApp", href: brand.whatsapp },
+    { label: "Place an Order", href: "#menu" },
   ],
   support: [
-    { label: "Pre-Order Info", href: "#contact" },
+    { label: "How to Order", href: "#contact" },
     { label: "Operating Hours", href: "#contact" },
     { label: "Instagram", href: brand.instagram },
-    { label: "WhatsApp", href: brand.whatsapp },
+    { label: "WhatsApp Enquiries", href: brand.whatsapp },
   ],
 };
 
 export const contactInfo = {
   whatsapp: brand.whatsapp,
-  whatsappLabel: "WhatsApp Only (No Calls)",
+  whatsappLabel: brand.whatsappCta,
   instagram: brand.instagram,
   instagramHandle: "@thecreamypastaco",
   location: brand.location,
   hours: brand.hours,
   orderNote: brand.orderNote,
+  whatsappEnquiryNote: brand.whatsappEnquiryNote,
   social: [
     { label: "Instagram", href: brand.instagram },
-    { label: "WhatsApp", href: brand.whatsapp },
+    { label: "WhatsApp Enquiries", href: brand.whatsapp },
   ],
 };

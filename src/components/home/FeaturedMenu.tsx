@@ -12,7 +12,7 @@ export function FeaturedMenu() {
       <SectionHeader
         eyebrow="Our Menu"
         title="Lasagna & Baked Macaroni"
-        description="All sizes in cm. Available in beef or chicken. Pre-order via WhatsApp."
+        description="All sizes in cm. Beef or chicken. Add to cart and checkout on this website."
         light
       />
 
@@ -28,7 +28,7 @@ export function FeaturedMenu() {
           variant="outline-light"
           size="lg"
           className="group"
-          onClick={() => scrollToSection("contact")}
+          onClick={() => scrollToSection("menu")}
         >
           Ready to Order?
           <ArrowRight size={17} className="transition-transform group-hover:translate-x-0.5" />

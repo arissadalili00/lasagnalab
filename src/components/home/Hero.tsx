@@ -50,12 +50,15 @@ export function Hero() {
 
             <FadeIn delay={0.55}>
               <div className="flex flex-col sm:flex-row gap-3 mb-8 sm:mb-10">
-                <a href={brand.whatsapp} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto group shadow-[0_8px_32px_rgba(242,92,5,0.45)]">
-                    Order on WhatsApp
-                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
-                  </Button>
-                </a>
+                <Button
+                  type="button"
+                  size="lg"
+                  className="w-full sm:w-auto group shadow-[0_8px_32px_rgba(242,92,5,0.45)]"
+                  onClick={() => scrollToSection("menu")}
+                >
+                  {brand.orderCta}
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+                </Button>
                 <Button
                   type="button"
                   size="lg"

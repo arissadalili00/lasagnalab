@@ -1,12 +1,11 @@
-import { Clock, MessageCircle, Star, ShieldCheck } from "lucide-react";
+import { Clock, Star, ShieldCheck } from "lucide-react";
 import { brand } from "../../data/site";
-import { Button } from "../ui/Button";
 
 const items = [
   { icon: Star, text: "5.0 Customer Rating" },
   { icon: Clock, text: "Open 10am – 5pm" },
   { icon: ShieldCheck, text: "Pre-Order · Fresh Daily" },
-  { icon: MessageCircle, text: "WhatsApp Orders Only" },
+  { icon: ShieldCheck, text: "Order on Our Website" },
 ];
 
 export function TrustMarquee() {
@@ -29,23 +28,19 @@ export function TrustMarquee() {
 
 export function PromoBanner() {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-24 cta-band">
+    <section className="relative overflow-hidden py-12 sm:py-16 cta-band">
       <div className="absolute inset-0 opacity-[0.07] bg-[url('https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=1200&h=400&fit=crop&q=80')] bg-cover bg-center" />
 
-      <div className="relative max-w-3xl mx-auto px-4 text-center">
-        <h2 className="hero-headline text-2xl xs:text-3xl sm:text-4xl md:text-5xl text-white mb-4 sm:mb-5">
-          Ready to Order?
-        </h2>
-        <p className="text-white text-base sm:text-lg mb-8 sm:mb-10 leading-relaxed font-semibold max-w-xl mx-auto">
-          Message us on WhatsApp to pre-order. Pick beef or chicken, choose your
-          size — we&apos;ll confirm your pickup time.
+      <div className="relative max-w-2xl mx-auto px-4 text-center">
+        <p className="text-butter text-xs sm:text-sm font-bold uppercase tracking-widest mb-3">
+          {brand.location}
         </p>
-        <a href={brand.whatsapp} target="_blank" rel="noopener noreferrer">
-          <Button size="lg" variant="outline-light" className="shadow-lg">
-            <MessageCircle size={22} />
-            Chat on WhatsApp
-          </Button>
-        </a>
+        <h2 className="hero-headline text-2xl sm:text-3xl md:text-4xl text-white mb-3">
+          Fresh trays, baked to order
+        </h2>
+        <p className="text-white/80 text-sm sm:text-base font-medium">
+          {brand.hours} · Pre-order from the Menu
+        </p>
       </div>
     </section>
   );

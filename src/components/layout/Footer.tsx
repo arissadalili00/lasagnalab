@@ -76,7 +76,7 @@ export function Footer() {
               <li>{contactInfo.hours}</li>
               <li>
                 <a href={contactInfo.whatsapp} className="hover:text-tomato transition-colors">
-                  WhatsApp to order
+                  {contactInfo.whatsappLabel}
                 </a>
               </li>
             </ul>
