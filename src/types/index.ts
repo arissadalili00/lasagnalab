@@ -22,11 +22,8 @@ export interface CartItem {
 
 export interface Testimonial {
   id: string;
-  name: string;
-  avatar: string;
   rating: number;
   review: string;
-  location: string;
 }
 
 export interface Stat {
@@ -47,6 +44,7 @@ export interface CheckoutFormData {
   address: string;
   city: string;
   zipCode: string;
+  pickupDate: string;
   notes: string;
 }
 
@@ -65,4 +63,5 @@ export interface OrderSummary {
 export interface NavLink {
   label: string;
   href: string;
+  sectionId: string;
 }

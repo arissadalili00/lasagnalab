@@ -1,14 +1,10 @@
 import type { Product } from "../types";
 
-const img = (path: string) =>
-  `https://images.unsplash.com/${path}?auto=format&fit=crop&w=700&h=500&q=80`;
-
-const images = {
-  lasagnaRegular: img("photo-1574894709920-11b28e7367e3"),
-  lasagnaLarge: img("photo-1481391319762-47dff72954d9"),
-  lasagnaPetite: img("photo-1476124369491-e7addf5db371"),
-  macaroniRegular: img("photo-1621996346565-e3dbc646d9a9"),
-  macaroniLarge: img("photo-1512058564366-18510be2db19"),
+/** Real product photos in /public/images */
+export const productImages = {
+  handsomeRegular: "/images/handsome-regular-lasagna.png",
+  happyLarge: "/images/happy-large-tray.png",
+  prettyPetite: "/images/pretty-petite-lasagna.png",
 };
 
 export const products: Product[] = [
@@ -19,7 +15,7 @@ export const products: Product[] = [
       "Rich, creamy beef or chicken lasagna baked golden in our signature tray. Perfect for a satisfying solo meal.",
     price: 16,
     rating: 5,
-    image: images.lasagnaRegular,
+    image: productImages.handsomeRegular,
     category: "lasagna",
     tags: ["lasagna", "regular", "bestseller"],
     size: "Handsome Regular",
@@ -34,7 +30,7 @@ export const products: Product[] = [
       "Our family-size lasagna — layers of creamy pasta and hearty filling. Ideal for sharing at gatherings.",
     price: 57,
     rating: 5,
-    image: images.lasagnaLarge,
+    image: productImages.happyLarge,
     category: "lasagna",
     tags: ["lasagna", "large", "sharing"],
     size: "Happy Large",
@@ -49,7 +45,7 @@ export const products: Product[] = [
       "A pack of 6 adorable mini lasagnas — great for parties, gifts, or trying both beef and chicken.",
     price: 35,
     rating: 5,
-    image: images.lasagnaPetite,
+    image: productImages.prettyPetite,
     category: "lasagna",
     tags: ["lasagna", "petite", "party"],
     size: "Pretty Petite Pack of 6",
@@ -64,7 +60,7 @@ export const products: Product[] = [
       "Creamy baked macaroni with your choice of beef or chicken — comfort food at its finest, made fresh to order.",
     price: 15,
     rating: 5,
-    image: images.macaroniRegular,
+    image: productImages.handsomeRegular,
     category: "macaroni",
     tags: ["macaroni", "regular", "creamy"],
     size: "Handsome Regular",
@@ -79,7 +75,7 @@ export const products: Product[] = [
       "Generous tray of luscious baked macaroni — cheesy, creamy, and baked until perfectly golden on top.",
     price: 55,
     rating: 5,
-    image: images.macaroniLarge,
+    image: productImages.happyLarge,
     category: "macaroni",
     tags: ["macaroni", "large", "sharing"],
     size: "Happy Large",

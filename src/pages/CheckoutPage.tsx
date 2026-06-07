@@ -14,7 +14,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { formatCurrency } from "../utils/formatCurrency";
 import { generateOrderId } from "../utils/order";
-import { saveOrderToHistory } from "../utils/receipt";
+import { saveOrderToHistory, todayIsoDate } from "../utils/receipt";
 import {
   sendOrderReceiptEmailSafe,
   type EmailReceiptStatus,
@@ -34,6 +34,7 @@ const initialForm: CheckoutFormData = {
   address: "",
   city: "",
   zipCode: "",
+  pickupDate: "",
   notes: "",
 };
 
@@ -403,6 +404,25 @@ export function CheckoutPage() {
                     </div>
                     <div>
                       <label
+                        htmlFor="pickupDate"
+                        className="block text-sm font-medium mb-1.5"
+                      >
+                        Preferred Pickup / Delivery Date
+                      </label>
+                      <input
+                        id="pickupDate"
+                        type="date"
+                        required
+                        min={todayIsoDate()}
+                        value={form.pickupDate}
+                        onChange={(e) =>
+                          updateField("pickupDate", e.target.value)
+                        }
+                        className={inputClass}
+                      />
+                    </div>
+                    <div>
+                      <label
                         htmlFor="notes"
                         className="block text-sm font-medium mb-1.5"
                       >
@@ -414,7 +434,7 @@ export function CheckoutPage() {
                         value={form.notes}
                         onChange={(e) => updateField("notes", e.target.value)}
                         className={`${inputClass} resize-none`}
-                        placeholder="Gate code, apartment number, etc."
+                        placeholder="e.g. Chicken, pickup around 2pm"
                       />
                     </div>
                   </div>

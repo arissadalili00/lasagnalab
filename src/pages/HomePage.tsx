@@ -13,12 +13,16 @@ export function HomePage() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace("#", "");
-      setTimeout(() => {
+    if (!location.hash) return;
+    const id = location.hash.replace("#", "");
+    const timer = window.setTimeout(() => {
+      if (id === "home") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-      }, 400);
-    }
+      }
+    }, 150);
+    return () => window.clearTimeout(timer);
   }, [location]);
 
   return (

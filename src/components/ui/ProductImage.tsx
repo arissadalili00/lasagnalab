@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=700&h=500&q=80";
+const FALLBACK_IMAGE = "/images/handsome-regular-lasagna.png";
 
 interface ProductImageProps {
   src: string;

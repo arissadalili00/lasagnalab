@@ -1,13 +1,13 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Star, Clock, ArrowRight, MapPin } from "lucide-react";
+import { brand } from "../../data/site";
 import { Button } from "../ui/Button";
 import { FadeIn } from "../ui/PageTransition";
-import { brand } from "../../data/site";
+import { scrollToSection } from "../../utils/scrollToSection";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[100dvh] flex items-center overflow-hidden hero-dark">
+    <section id="home" className="relative min-h-[100dvh] flex items-center overflow-hidden hero-dark">
       <div className="absolute inset-0 opacity-[0.04] bg-[url('https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=1400&h=900&fit=crop&q=80')] bg-cover bg-center" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-[5.5rem] sm:pt-32 pb-16 lg:pb-20">
@@ -56,11 +56,15 @@ export function Hero() {
                     <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
                   </Button>
                 </a>
-                <Link to="/menu" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline-light" className="w-full sm:w-auto">
-                    View Menu
-                  </Button>
-                </Link>
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline-light"
+                  className="w-full sm:w-auto"
+                  onClick={() => scrollToSection("menu")}
+                >
+                  View Menu
+                </Button>
               </div>
             </FadeIn>
 

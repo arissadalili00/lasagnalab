@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { products } from "../../data/products";
 import { ProductCard } from "../products/ProductCard";
 import { SectionHeader, SectionWrapper } from "../ui/SectionHeader";
 import { Button } from "../ui/Button";
 import { ScrollReveal } from "../ui/ScrollReveal";
+import { scrollToSection } from "../../utils/scrollToSection";
 
 export function FeaturedMenu() {
   return (
@@ -23,12 +23,16 @@ export function FeaturedMenu() {
       </div>
 
       <ScrollReveal className="text-center mt-12 sm:mt-14">
-        <Link to="/menu">
-          <Button variant="outline-light" size="lg" className="group">
-            Full Menu & Prices
-            <ArrowRight size={17} className="transition-transform group-hover:translate-x-0.5" />
-          </Button>
-        </Link>
+        <Button
+          type="button"
+          variant="outline-light"
+          size="lg"
+          className="group"
+          onClick={() => scrollToSection("contact")}
+        >
+          Ready to Order?
+          <ArrowRight size={17} className="transition-transform group-hover:translate-x-0.5" />
+        </Button>
       </ScrollReveal>
     </SectionWrapper>
   );

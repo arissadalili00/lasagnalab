@@ -1,6 +1,6 @@
 import emailjs, { EmailJSResponseStatus } from "@emailjs/browser";
 import type { OrderSummary } from "../types";
-import { buildFullReceiptText } from "./receipt";
+import { buildFullReceiptText, formatPickupDate } from "./receipt";
 import { brand, emailConfig, emailJsConfig as emailJsDefaults } from "../data/site";
 
 export type EmailReceiptStatus = "sent" | "failed" | "not_configured";
@@ -101,6 +101,7 @@ export async function sendOrderReceiptEmail(
       customer_phone: order.phone,
       order_id: order.orderId,
       order_total: order.total.toFixed(2),
+      pickup_date: formatPickupDate(order.form.pickupDate),
       receipt: buildFullReceiptText(order),
       company_name: brand.name,
       company_email: emailConfig.companyEmail,

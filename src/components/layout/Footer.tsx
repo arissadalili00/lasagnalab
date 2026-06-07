@@ -44,6 +44,14 @@ export function Footer() {
                         {link.label}
                         <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100" />
                       </a>
+                    ) : link.href.startsWith("#") ? (
+                      <Link
+                        to={{ pathname: "/", hash: link.href }}
+                        className="group inline-flex items-center gap-1 text-sm text-white/55 hover:text-tomato transition-colors font-medium"
+                      >
+                        {link.label}
+                        <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100" />
+                      </Link>
                     ) : (
                       <Link
                         to={link.href}

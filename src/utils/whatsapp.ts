@@ -1,5 +1,6 @@
 import type { CartItem, CheckoutFormData } from "../types";
 import { formatCurrency } from "./formatCurrency";
+import { formatPickupDate } from "./receipt";
 import { brand, payment } from "../data/site";
 
 export interface OrderSummary {
@@ -30,6 +31,7 @@ export function buildOrderReceiptMessage(order: OrderSummary): string {
     `*Order ID:* ${order.orderId}`,
     `*Name:* ${order.shortName}`,
     `*Phone:* ${order.phone}`,
+    `*Pickup date:* ${formatPickupDate(order.form.pickupDate)}`,
     "",
     "*Your order:*",
     itemLines,

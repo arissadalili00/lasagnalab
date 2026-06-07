@@ -6,6 +6,22 @@ const ORDERS_KEY = "lasagnalab-orders";
 
 const paymentLabel = "Bank Transfer / QR Code";
 
+export function formatPickupDate(isoDate: string): string {
+  if (!isoDate.trim()) return "Not specified";
+  const date = new Date(`${isoDate}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return isoDate;
+  return date.toLocaleDateString("en-MY", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export function todayIsoDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 export interface SavedOrder extends OrderSummary {
   placedAt: string;
 }
@@ -46,6 +62,7 @@ export function buildFullReceiptText(order: OrderSummary): string {
     "────────────────────────────────",
     "DELIVERY",
     "────────────────────────────────",
+    `Pickup date: ${formatPickupDate(order.form.pickupDate)}`,
     `${order.form.address}`,
     `${order.form.city} ${order.form.zipCode}`,
     order.form.notes ? `\nNotes: ${order.form.notes}` : null,

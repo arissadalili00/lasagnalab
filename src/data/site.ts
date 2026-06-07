@@ -12,6 +12,11 @@ export const brand = {
   orderNote: "Pre-order only · WhatsApp to order (no calls)",
 };
 
+/** Real product & brand photos (stored in /public/images). */
+export const brandImages = {
+  aboutKitchen: "/images/about-kitchen-trays.png",
+};
+
 /** Company email — connect this Gmail in EmailJS (no password in code). */
 export const emailConfig = {
   companyEmail: "thecreamypastaco@gmail.com",
@@ -77,23 +82,23 @@ export const whyChooseUs: WhyChooseItem[] = [
 ];
 
 export const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Menu", href: "/menu" },
-  { label: "About", href: "/#about" },
-  { label: "Reviews", href: "/#testimonials" },
-  { label: "Order", href: "/#contact" },
+  { label: "Home", href: "#home", sectionId: "home" },
+  { label: "Menu", href: "#menu", sectionId: "menu" },
+  { label: "About", href: "#about", sectionId: "about" },
+  { label: "Reviews", href: "#testimonials", sectionId: "testimonials" },
+  { label: "Order", href: "#contact", sectionId: "contact" },
 ];
 
 export const footerLinks = {
   company: [
-    { label: "About Us", href: "/#about" },
-    { label: "Our Menu", href: "/menu" },
-    { label: "Reviews", href: "/#testimonials" },
+    { label: "About Us", href: "#about" },
+    { label: "Our Menu", href: "#menu" },
+    { label: "Reviews", href: "#testimonials" },
     { label: "Order via WhatsApp", href: brand.whatsapp },
   ],
   support: [
-    { label: "Pre-Order Info", href: "/#contact" },
-    { label: "Operating Hours", href: "/#contact" },
+    { label: "Pre-Order Info", href: "#contact" },
+    { label: "Operating Hours", href: "#contact" },
     { label: "Instagram", href: brand.instagram },
     { label: "WhatsApp", href: brand.whatsapp },
   ],

@@ -14,6 +14,14 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const { addItem } = useCart();
   const isBestseller = product.tags.includes("bestseller");
 
+  const imageFocus: Record<string, string> = {
+    "lasagna-regular": "object-[center_38%]",
+    "macaroni-regular": "object-[center_38%]",
+    "lasagna-large": "object-[center_42%]",
+    "macaroni-large": "object-[center_42%]",
+    "lasagna-petite": "object-center scale-105",
+  };
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 24 }}
@@ -27,7 +35,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           <ProductImage
             src={product.image}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className={`h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 ${imageFocus[product.id] ?? "object-center"}`}
           />
           {isBestseller && (
             <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-tomato text-white text-[11px] font-bold uppercase tracking-wide">
